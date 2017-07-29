@@ -5,11 +5,6 @@ import "./owned.sol";
 
 contract SwearGameAbstract is Owned {
 
-    /// @notice () - a payable function which is used by the service as a deposit functionality
-    ///
-    ///The function without name is the default function that is called whenever anyone sends funds to a contract
-    function () payable;
-
     /// @notice register - register a player to the game
     ///
     /// The function will throw if the player is already register or there is not
@@ -17,7 +12,7 @@ contract SwearGameAbstract is Owned {
     /// case of a valid case.
     /// @param _player  - the player address
     /// @return bool registered - true for success registration.
-    function register(address _player) onlyOwner public returns (bool registered);
+    function register(address _player) onlyOwner public returns (bool);
 
     /// @notice leaveGame - dismiss a player from the game (unregister)
     /// allow only plaintiff which do not have openCases on it name to leave game
@@ -43,6 +38,12 @@ contract SwearGameAbstract is Owned {
     /// @param id  - case id
     /// @return bool - true for successful operation.
     function trial(bytes32 id) public returns (bool);
+
+    function deposit(uint epochs) payable returns (bool);
+
+    function collectDeposit() external returns (bool);
+
+    function isRegister(address player) returns (bool);
 
     event Decision(string decide);
     event DepositStaked(uint depositAmount, uint deposit);

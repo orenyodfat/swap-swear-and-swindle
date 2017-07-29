@@ -7,7 +7,7 @@ import "./abstracts/trialrulesabstract.sol";
 
 contract SwearGame is SwearGameAbstract {
 
-    uint256 public deposit;
+    //uint256 public deposit;
     uint  public playerCount;
     SampleToken public token;
     TrialRulesAbstract public trialRules;
@@ -19,19 +19,23 @@ contract SwearGame is SwearGameAbstract {
         uint8 valid;
     }
 
-  //id map to _Case
-    mapping(bytes32 => Case)  OpenCases;
+    struct Deposit {
+        bool inDepositPeriod;
+        uint vestingPeriod;
+        uint depositedAmount;
+    }
+    mapping(address=>Deposit) public deposits;
     mapping(address => bool) public players;
+    //id map to Case
+    mapping(bytes32 => Case)  OpenCases;
     mapping(address => bytes32[]) public ids;
 
-  /// @notice SwearGame - Swear game constructor this function is called along with
-  /// the contract deployment time.
-  ///
-  /// @param _token address of the token contract
-  /// @param _trialRules - address of the trial specific rules contract
-  /// @return WitnessAbstract - return a witness contract instance
-    function SwearGame(address _token, address _trialRules) {
-
+    /// @notice SwearGame - Swear game constructor this function is called along with
+    /// the contract deployment time.
+    /// @param _token - address of the token contract
+    /// @param _trialRules - address of the trial specific rules contract
+    /// @return WitnessAbstract - return a witness contract instance
+    function SwearGame(address _token,address _trialRules) {
         token = SampleToken(_token);
         trialRules = TrialRulesAbstract(_trialRules);
         playerCount = 0;
@@ -45,7 +49,7 @@ contract SwearGame is SwearGameAbstract {
     function _newCase(address _plaintiff,bytes32 _serviceId,uint8 _status) private returns (bytes32 id) {
         id = sha3(_plaintiff,_serviceId, now);
         if (OpenCases[id].valid != 0)
-        return 0x0;
+           return 0x0;
         OpenCases[id] = Case(
             _plaintiff,
             _serviceId,
@@ -61,7 +65,7 @@ contract SwearGame is SwearGameAbstract {
 
     function setStatus(bytes32 id,uint8 status) private constant  returns (bool) {
         if (msg.sender == owner)
-        throw;
+            throw;
         OpenCases[id].status = status;
         return true;
     }
@@ -69,7 +73,7 @@ contract SwearGame is SwearGameAbstract {
     function resolveCase(bytes32 _id) private {
 
         if (OpenCases[_id].status == uint8(TrialRulesAbstract.Status.UNCHALLENGED))
-        throw;
+            throw;
         OpenCases[_id].plaintiff = 0;
         OpenCases[_id].valid = 0;
         OpenCases[_id].status = uint8(TrialRulesAbstract.Status.UNCHALLENGED);
@@ -77,17 +81,6 @@ contract SwearGame is SwearGameAbstract {
 
     function getCase(bytes32 _id) private returns (address plaintiff,bytes32 serviceId) {
         return (OpenCases[_id].plaintiff,OpenCases[_id].serviceId);
-    }
-
-    /// @notice () - a payable function which is used by the service as a deposit functionality
-    ///
-    ///The function without name is the default function that is called whenever anyone sends funds to a contract
-    /// It is used by the service for deposit
-    function () payable {
-        uint amount = msg.value;
-        require(token.transferFrom(owner, address(this), amount));
-        deposit += amount;
-        DepositStaked(amount, deposit);
     }
 
     function verdict(bytes32 _id,uint8 status,address plaintiff) private returns(bool) {
@@ -104,7 +97,7 @@ contract SwearGame is SwearGameAbstract {
         uint reward = trialRules.getReward();
         bool caseCompensated = compensate(plaintiff,reward);
         resolveCase(_id);
-        _leaveGame(plaintiff);
+        unRegister(plaintiff);
         CaseResolved(
             _id,
             plaintiff,
@@ -112,38 +105,6 @@ contract SwearGame is SwearGameAbstract {
             status
         );
         return caseCompensated;
-    }
-
-    function compensate(address _beneficiary,uint reward) private returns(bool compensated) {
-
-        compensated = token.transferFrom(address(this), _beneficiary, reward);
-        require(compensated);
-        deposit -= reward;
-        Compensate(_beneficiary,reward);
-        return compensated;
-    }
-
-    /// @notice register - register a player to the game
-    ///
-    /// The function will throw if the player is already register or there is not
-    /// enough deposit in the contract to ensure the player could be compensated for the
-    /// case of a valid case.
-    /// @param _player  - the player address
-    /// @return bool registered - true for success registration.
-    function register(address _player) onlyOwner public returns (bool registered) {
-
-        require(!players[_player]);
-        uint reward = trialRules.getReward();
-        if (playerCount == 0) {
-            require(deposit >= reward);
-        }else if ((deposit / playerCount) < reward) {
-            AdditionalDepositRequired(deposit);
-            throw;
-        }
-        players[_player] = true;
-        playerCount++;
-        NewPlayer(_player);
-        return true;
     }
 
     /// @notice leaveGame - dismiss a player from the game (unregister)
@@ -155,15 +116,7 @@ contract SwearGame is SwearGameAbstract {
         //allow only plaintiff which do not have openCases on it name to leave game
             require(OpenCases[ids[msg.sender][i]].valid == 0);
         }
-        return _leaveGame(msg.sender);
-    }
-
-    function _leaveGame(address _player) private {
-
-        require(players[_player]);
-        PlayerLeftGame(_player);
-        players[_player] = false;
-        playerCount--;
+        return unRegister(msg.sender);
     }
 
     /// @notice getStatus - return the trial status of a case
@@ -184,7 +137,7 @@ contract SwearGame is SwearGameAbstract {
         require(players[msg.sender]);
         bytes32 id = _newCase(msg.sender,serviceId,uint8(trialRules.getInitialStatus()));
         if (id == 0x0)
-        return false;
+            return false;
 
         ids[msg.sender].push(id);
         return true;
@@ -211,10 +164,7 @@ contract SwearGame is SwearGameAbstract {
 
         uint8 status = getStatus(id);
         var(plaintiff,serviceId) = getCase(id);
-        if (status == uint8(TrialRulesAbstract.Status.UNCHALLENGED)) {
-            return;
-        }
-        for (;status != uint8(TrialRulesAbstract.Status.UNCHALLENGED);) {
+        while (status != uint8(TrialRulesAbstract.Status.UNCHALLENGED)) {
             WitnessAbstract witness = trialRules.getWitness(status);
             WitnessAbstract.Status outcome;
             if (witness == WitnessAbstract(0x0)) {
@@ -246,15 +196,84 @@ contract SwearGame is SwearGameAbstract {
         }
     }
 
+    function unRegister(address _player) {
+
+        require(players[_player]);
+        PlayerLeftGame(_player);
+        players[_player] = false;
+        playerCount--;
+    }
+
+    /// @notice register - register a player to the game
+    ///
+    /// The function will throw if the player is already register or there is not
+    /// enough deposit in the contract to ensure the player could be compensated for the
+    /// case of a valid case.
+    /// @param _player  - the player address
+    /// @return bool registered - true for success registration.
+    function register(address _player) onlyOwner public returns (bool) {
+
+        require(!players[_player]);
+        uint reward = trialRules.getReward();
+        if (playerCount == 0) {
+            require(deposits[owner].depositedAmount >= reward);
+        }else if ((deposits[owner].depositedAmount / playerCount) < reward) {
+            AdditionalDepositRequired(deposits[owner].depositedAmount);
+            throw;
+        }
+        players[_player] = true;
+        playerCount++;
+        NewPlayer(_player);
+        return true;
+    }
+
+    function deposit(uint epochs) payable returns (bool) {
+
+        require(token.transferFrom(msg.sender, address(this), msg.value));
+        if (deposits[msg.sender].inDepositPeriod) {
+            deposits[msg.sender].depositedAmount += msg.value;
+        }else {
+            deposits[msg.sender] = Deposit({inDepositPeriod: true, vestingPeriod: now + epochs * trialRules.getEpoch(), depositedAmount: msg.value});
+        }
+        DepositStaked(msg.value, deposits[msg.sender].depositedAmount);
+        return true;
+    }
+
+    function collectDeposit() external returns (bool) {
+
+        require(playerCount == 0);
+        Deposit storage depositInfo = deposits[msg.sender];
+        if (depositInfo.inDepositPeriod && depositInfo.vestingPeriod <= now) {
+            uint toTransfer = depositInfo.depositedAmount;
+            deposits[msg.sender] = Deposit(false, 0, 0);
+            token.transferFrom(address(this),msg.sender, toTransfer);
+            return true;
+          }
+        return false;
+    }
+
+    function isRegister(address player) returns (bool) {
+        return players[msg.sender];
+    }
+
+    function compensate(address _beneficiary,uint reward) private returns(bool compensated) {
+
+        compensated = token.transferFrom(address(this), _beneficiary, reward);
+        require(compensated);
+        deposits[owner].depositedAmount -= reward;
+        Compensate(_beneficiary,reward);
+        return compensated;
+    }
+
     event Decision(string decide);
-    event DepositStaked(uint depositAmount, uint deposit);
-    event Compensate(address recipient, uint reward);
-    event NewPlayer(address playerId);
-    event PlayerLeftGame(address playerId);
     event NewCaseOpened(bytes32 id, address plaintiff);
     event NewEvidenceSubmitted(bytes32 id, address plaintiff);
     event CaseResolved(bytes32 id, address plaintiff, uint reward,uint8 status);
     event Payment(address from,address to ,uint256 value);
+    event NewPlayer(address playerId);
     event AdditionalDepositRequired(uint256 deposit);
+    event DepositStaked(uint depositAmount, uint deposit);
+    event Compensate(address recipient, uint reward);
+    event PlayerLeftGame(address playerId);
 
 }

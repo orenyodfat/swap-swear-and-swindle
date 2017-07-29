@@ -4,7 +4,6 @@ package contracts
 //go:generate abigen --sol ./mirrorens.sol --pkg mirrorens --out ./mirrorgame/witnesses/mirrorens/mirrorens.go
 //go:generate abigen --sol ./promisevalidator.sol --pkg promisevalidator --out ./mirrorgame/witnesses/promisevalidator/promisevalidator.go
 //go:generate abigen --sol ./mirrorrules.sol --pkg mirrorrules --out ./mirrorgame/rules/mirrorrules.go
-
 import (
 	"crypto/ecdsa"
 	"math/big"
@@ -162,7 +161,7 @@ func deposit(t *testing.T, backend *backends.SimulatedBackend, sampleToken *Samp
 	//deposit 50 token to the contract
 	opts = bind.NewKeyedTransactor(serviceKey)
 	opts.Value = big.NewInt(serviceDeposit)
-	_, err = swearGame.SwearGameTransactor.contract.Transfer(opts)
+	_, err = swearGame.Deposit(opts, big.NewInt(100))
 	if err != nil {
 		t.Fatalf("depost tokens to contract: expected no error, got %v", err)
 	}
@@ -197,7 +196,7 @@ func openCaseForMirrorGame(t *testing.T, clientContent string, serviceContent st
 	if err != nil {
 		t.Fatal("registerENSRecord", clientENSName, "fail")
 	}
-	depositBefore, err := swearGame.Deposit(&bind.CallOpts{})
+	depositBefore, err := swearGame.Deposits(&bind.CallOpts{}, serviceAddr)
 	if err != nil {
 		t.Fatalf("AmountStaked : expected no error, got %v", err)
 	}
@@ -269,7 +268,7 @@ func openCaseForMirrorGame(t *testing.T, clientContent string, serviceContent st
 		commit(backend)
 	}
 
-	depositAfter, err := swearGame.Deposit(&bind.CallOpts{})
+	depositAfter, err := swearGame.Deposits(&bind.CallOpts{}, serviceAddr)
 	if err != nil {
 		t.Fatalf("AmountStaked : expected no error, got %v", err)
 	}
@@ -280,15 +279,15 @@ func openCaseForMirrorGame(t *testing.T, clientContent string, serviceContent st
 	//If the client submit a case a valid case (ens are not equal) and the case is within the time period the service promised
 	//so it is a valid case
 	if (clientContent != serviceContent) && (numberOfBlocksToWait <= PromiseTillNextBlocks) {
-		if depositBefore.Int64()-depositAfter.Int64() != int64(compensationAmount) {
-			t.Fatalf("After a valid case proccess : deposit at the contract should reduce by %d  ( got %d)", compensationAmount, (depositBefore.Int64() - depositAfter.Int64()))
+		if depositBefore.DepositedAmount.Int64()-depositAfter.DepositedAmount.Int64() != int64(compensationAmount) {
+			t.Fatalf("After a valid case proccess : deposit at the contract should reduce by %d  ( got %d)", compensationAmount, (depositBefore.DepositedAmount.Int64() - depositAfter.DepositedAmount.Int64()))
 		}
 		if balanceOfClientAfter.Int64()-balanceOfClientBefore.Int64() != int64(compensationAmount) {
 			t.Fatalf("After a valid case proccess : the balance of client should increase by %d   ( got %d)", compensationAmount, (balanceOfClientAfter.Int64() - balanceOfClientBefore.Int64()))
 		}
 	} else {
-		if depositBefore.Int64() != depositAfter.Int64() {
-			t.Fatalf("non valid case proccess : deposit at the contract should be the same as before  ( got %d)", (depositBefore.Int64() - depositAfter.Int64()))
+		if depositBefore.DepositedAmount.Int64() != depositAfter.DepositedAmount.Int64() {
+			t.Fatalf("non valid case proccess : deposit at the contract should be the same as before  ( got %d)", (depositBefore.DepositedAmount.Int64() - depositAfter.DepositedAmount.Int64()))
 		}
 		if balanceOfClientAfter.Int64() != balanceOfClientBefore.Int64() {
 			t.Fatalf("non valid  case proccess should end by no change to the client balance   ( got %d)", (balanceOfClientAfter.Int64() - balanceOfClientBefore.Int64()))
@@ -474,35 +473,35 @@ func TestDeposit(t *testing.T) {
 	commit(backend)
 	opts = bind.NewKeyedTransactor(serviceKey)
 	opts.Value = big.NewInt(serviceDeposit)
-	_, err = swearGame.SwearGameTransactor.contract.Transfer(opts)
+	_, err = swearGame.Deposit(opts, big.NewInt(100))
 
 	if err != nil {
 		t.Fatalf("depost tokens to contract: expected no error, got %v", err)
 	}
 	commit(backend)
 
-	deposit, err := swearGame.Deposit(&bind.CallOpts{})
+	deposit, err := swearGame.Deposits(&bind.CallOpts{}, serviceAddr)
 	if err != nil {
 		t.Fatalf("AmountStaked : expected no error, got %v", err)
 	}
 
-	if deposit.Int64() != big.NewInt(serviceDeposit).Int64() {
-		t.Fatalf("AmountStaked ", deposit.Int64(), "is not equal to the deposit amount", big.NewInt(serviceDeposit))
+	if deposit.DepositedAmount.Int64() != big.NewInt(serviceDeposit).Int64() {
+		t.Fatalf("AmountStaked ", deposit.DepositedAmount.Int64(), "is not equal to the deposit amount", big.NewInt(serviceDeposit))
 	}
 
 	opts.Value = big.NewInt(serviceDeposit)
-	_, err = swearGame.SwearGameTransactor.contract.Transfer(opts)
+	_, err = swearGame.Deposit(opts, big.NewInt(100))
 	if err != nil {
 		t.Fatalf("depost tokens to contract: expected no error, got %v", err)
 	}
 	commit(backend)
-	deposit, err = swearGame.Deposit(&bind.CallOpts{})
+	deposit, err = swearGame.Deposits(&bind.CallOpts{}, serviceAddr)
 	if err != nil {
 		t.Fatalf("AmountStaked : expected no error, got %v", err)
 	}
 	//test it accumulate the deposits
-	if deposit.Int64() != big.NewInt(serviceDeposit).Int64()*2 {
-		t.Fatalf("AmountStaked ", deposit.Int64(), "is not equal to the deposit amount", big.NewInt(serviceDeposit))
+	if deposit.DepositedAmount.Int64() != big.NewInt(serviceDeposit).Int64()*2 {
+		t.Fatalf("AmountStaked ", deposit.DepositedAmount.Int64(), "is not equal to the deposit amount", big.NewInt(serviceDeposit))
 	}
 	t.Log("amountstaked", deposit)
 
@@ -529,12 +528,12 @@ func deployTheGame(t *testing.T, backend *backends.SimulatedBackend) (
 	if err != nil {
 		t.Fatalf("deploy contract: expected no error, got %v", err)
 	}
-	mirrorFlowContractAddress, err := deployMirrorTransitions(serviceKey, big.NewInt(0), backend, promiseValidatorContractAddress, mirrorContractAddress)
+	mirrorRulesContractAddress, err := deployMirrorTransitions(serviceKey, big.NewInt(0), backend, promiseValidatorContractAddress, mirrorContractAddress)
 	if err != nil {
 		t.Fatalf("deploy contract: expected no error, got %v", err)
 	}
 
-	swearGameContractAddress, swearGame, err = deploySwearGame(serviceKey, big.NewInt(0), backend, sampleTokenAddress, mirrorFlowContractAddress, big.NewInt(compensationAmount))
+	swearGameContractAddress, swearGame, err = deploySwearGame(serviceKey, big.NewInt(0), backend, sampleTokenAddress, mirrorRulesContractAddress, big.NewInt(compensationAmount))
 	if err != nil {
 		t.Fatalf("deploy contract: expected no error, got %v", err)
 	}
