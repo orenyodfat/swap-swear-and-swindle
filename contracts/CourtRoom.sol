@@ -7,7 +7,6 @@ import "./abstracts/trialrulesabstract.sol";
 
 contract SwearGame is SwearGameAbstract {
 
-    //uint256 public deposit;
     uint  public playerCount;
     SampleToken public token;
     TrialRulesAbstract public trialRules;
@@ -28,6 +27,7 @@ contract SwearGame is SwearGameAbstract {
     mapping(address => bool) public players;
     //id map to Case
     mapping(bytes32 => Case)  OpenCases;
+    mapping(address => uint256)  OpenCasesNumber;
     mapping(address => bytes32[]) public ids;
 
     /// @notice SwearGame - Swear game constructor this function is called along with
@@ -138,8 +138,10 @@ contract SwearGame is SwearGameAbstract {
         bytes32 id = _newCase(msg.sender,serviceId,uint8(trialRules.getInitialStatus()));
         if (id == 0x0)
             return false;
-
+        OpenCasesNumber[msg.sender]++;
+        OpenCasesNumber[owner]++;
         ids[msg.sender].push(id);
+
         return true;
     }
 
@@ -191,6 +193,8 @@ contract SwearGame is SwearGameAbstract {
                 (status == uint8(TrialRulesAbstract.Status.NOT_GUILTY))){
                 verdict(id,status,plaintiff);
                 status = uint8(TrialRulesAbstract.Status.UNCHALLENGED);
+                OpenCasesNumber[plaintiff]--;
+                OpenCasesNumber[owner]--;
                 setStatus(id,status);
                 }
         }
@@ -233,7 +237,7 @@ contract SwearGame is SwearGameAbstract {
         if (deposits[msg.sender].inDepositPeriod) {
             deposits[msg.sender].depositedAmount += msg.value;
         }else {
-            deposits[msg.sender] = Deposit({inDepositPeriod: true, vestingPeriod: now + epochs * trialRules.getEpoch(), depositedAmount: msg.value});
+            deposits[msg.sender] = Deposit({inDepositPeriod: true, vestingPeriod: block.number + epochs * trialRules.getEpoch(), depositedAmount: msg.value});
         }
         DepositStaked(msg.value, deposits[msg.sender].depositedAmount);
         return true;
@@ -241,9 +245,9 @@ contract SwearGame is SwearGameAbstract {
 
     function collectDeposit() external returns (bool) {
 
-        require(playerCount == 0);
+        require(OpenCasesNumber[msg.sender] == 0);//check if there is no open case for the specific caller.
         Deposit storage depositInfo = deposits[msg.sender];
-        if (depositInfo.inDepositPeriod && depositInfo.vestingPeriod <= now) {
+        if (depositInfo.inDepositPeriod && depositInfo.vestingPeriod <= block.number) {
             uint toTransfer = depositInfo.depositedAmount;
             deposits[msg.sender] = Deposit(false, 0, 0);
             token.transferFrom(address(this),msg.sender, toTransfer);
