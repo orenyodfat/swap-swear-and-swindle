@@ -17,7 +17,7 @@ import (
 const OwnedABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"type\":\"constructor\"}]"
 
 // OwnedBin is the compiled bytecode used for deploying new contracts.
-const OwnedBin = `0x6060604052341561000f57600080fd5b5b60008054600160a060020a03191633600160a060020a03161790555b5b61015c8061003c6000396000f300606060405263ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416638da5cb5b8114610048578063a6f9dae114610084575b600080fd5b341561005357600080fd5b61005b6100b2565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200160405180910390f35b341561008f57600080fd5b6100b073ffffffffffffffffffffffffffffffffffffffff600435166100ce565b005b60005473ffffffffffffffffffffffffffffffffffffffff1681565b6000543373ffffffffffffffffffffffffffffffffffffffff9081169116146100f657600080fd5b6000805473ffffffffffffffffffffffffffffffffffffffff191673ffffffffffffffffffffffffffffffffffffffff83161790555b5b505600a165627a7a72305820611ce1ef142425eac61cf323e7ea291d4427a3ba998d8d1572992b5b6933c1270029`
+const OwnedBin = `0x6060604052341561000f57600080fd5b5b60008054600160a060020a03191633600160a060020a03161790555b5b61015c8061003c6000396000f300606060405263ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416638da5cb5b8114610048578063a6f9dae114610084575b600080fd5b341561005357600080fd5b61005b6100b2565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200160405180910390f35b341561008f57600080fd5b6100b073ffffffffffffffffffffffffffffffffffffffff600435166100ce565b005b60005473ffffffffffffffffffffffffffffffffffffffff1681565b6000543373ffffffffffffffffffffffffffffffffffffffff9081169116146100f657600080fd5b6000805473ffffffffffffffffffffffffffffffffffffffff191673ffffffffffffffffffffffffffffffffffffffff83161790555b5b505600a165627a7a72305820cbf28f26176833b30f4930508926cf5fc5658947137b7741e8f732f5e9cf1c0a0029`
 
 // DeployOwned deploys a new Ethereum contract, binding an instance of Owned to it.
 func DeployOwned(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Owned, error) {
@@ -206,11 +206,393 @@ func (_Owned *OwnedTransactorSession) ChangeOwner(_newOwner common.Address) (*ty
 	return _Owned.Contract.ChangeOwner(&_Owned.TransactOpts, _newOwner)
 }
 
+// RegistrarAbstractABI is the input ABI used to generate the binding from.
+const RegistrarAbstractABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"collectDeposit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"player\",\"type\":\"address\"}],\"name\":\"isRegister\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"unRegister\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_address\",\"type\":\"address\"}],\"name\":\"incrementOpenCases\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"register\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_beneficiary\",\"type\":\"address\"},{\"name\":\"reward\",\"type\":\"uint256\"}],\"name\":\"compensate\",\"outputs\":[{\"name\":\"compensated\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_address\",\"type\":\"address\"}],\"name\":\"decrementOpenCases\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"epochs\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":true,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_swearAddress\",\"type\":\"address\"}],\"name\":\"setSwearContractAddress\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"}]"
+
+// RegistrarAbstractBin is the compiled bytecode used for deploying new contracts.
+const RegistrarAbstractBin = `0x`
+
+// DeployRegistrarAbstract deploys a new Ethereum contract, binding an instance of RegistrarAbstract to it.
+func DeployRegistrarAbstract(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *RegistrarAbstract, error) {
+	parsed, err := abi.JSON(strings.NewReader(RegistrarAbstractABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(RegistrarAbstractBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &RegistrarAbstract{RegistrarAbstractCaller: RegistrarAbstractCaller{contract: contract}, RegistrarAbstractTransactor: RegistrarAbstractTransactor{contract: contract}}, nil
+}
+
+// RegistrarAbstract is an auto generated Go binding around an Ethereum contract.
+type RegistrarAbstract struct {
+	RegistrarAbstractCaller     // Read-only binding to the contract
+	RegistrarAbstractTransactor // Write-only binding to the contract
+}
+
+// RegistrarAbstractCaller is an auto generated read-only Go binding around an Ethereum contract.
+type RegistrarAbstractCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// RegistrarAbstractTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type RegistrarAbstractTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// RegistrarAbstractSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type RegistrarAbstractSession struct {
+	Contract     *RegistrarAbstract // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts      // Call options to use throughout this session
+	TransactOpts bind.TransactOpts  // Transaction auth options to use throughout this session
+}
+
+// RegistrarAbstractCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type RegistrarAbstractCallerSession struct {
+	Contract *RegistrarAbstractCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts            // Call options to use throughout this session
+}
+
+// RegistrarAbstractTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type RegistrarAbstractTransactorSession struct {
+	Contract     *RegistrarAbstractTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts            // Transaction auth options to use throughout this session
+}
+
+// RegistrarAbstractRaw is an auto generated low-level Go binding around an Ethereum contract.
+type RegistrarAbstractRaw struct {
+	Contract *RegistrarAbstract // Generic contract binding to access the raw methods on
+}
+
+// RegistrarAbstractCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type RegistrarAbstractCallerRaw struct {
+	Contract *RegistrarAbstractCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// RegistrarAbstractTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type RegistrarAbstractTransactorRaw struct {
+	Contract *RegistrarAbstractTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewRegistrarAbstract creates a new instance of RegistrarAbstract, bound to a specific deployed contract.
+func NewRegistrarAbstract(address common.Address, backend bind.ContractBackend) (*RegistrarAbstract, error) {
+	contract, err := bindRegistrarAbstract(address, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &RegistrarAbstract{RegistrarAbstractCaller: RegistrarAbstractCaller{contract: contract}, RegistrarAbstractTransactor: RegistrarAbstractTransactor{contract: contract}}, nil
+}
+
+// NewRegistrarAbstractCaller creates a new read-only instance of RegistrarAbstract, bound to a specific deployed contract.
+func NewRegistrarAbstractCaller(address common.Address, caller bind.ContractCaller) (*RegistrarAbstractCaller, error) {
+	contract, err := bindRegistrarAbstract(address, caller, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &RegistrarAbstractCaller{contract: contract}, nil
+}
+
+// NewRegistrarAbstractTransactor creates a new write-only instance of RegistrarAbstract, bound to a specific deployed contract.
+func NewRegistrarAbstractTransactor(address common.Address, transactor bind.ContractTransactor) (*RegistrarAbstractTransactor, error) {
+	contract, err := bindRegistrarAbstract(address, nil, transactor)
+	if err != nil {
+		return nil, err
+	}
+	return &RegistrarAbstractTransactor{contract: contract}, nil
+}
+
+// bindRegistrarAbstract binds a generic wrapper to an already deployed contract.
+func bindRegistrarAbstract(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(RegistrarAbstractABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_RegistrarAbstract *RegistrarAbstractRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _RegistrarAbstract.Contract.RegistrarAbstractCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_RegistrarAbstract *RegistrarAbstractRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.RegistrarAbstractTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_RegistrarAbstract *RegistrarAbstractRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.RegistrarAbstractTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_RegistrarAbstract *RegistrarAbstractCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _RegistrarAbstract.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_RegistrarAbstract *RegistrarAbstractTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_RegistrarAbstract *RegistrarAbstractTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.contract.Transact(opts, method, params...)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_RegistrarAbstract *RegistrarAbstractCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _RegistrarAbstract.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_RegistrarAbstract *RegistrarAbstractSession) Owner() (common.Address, error) {
+	return _RegistrarAbstract.Contract.Owner(&_RegistrarAbstract.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_RegistrarAbstract *RegistrarAbstractCallerSession) Owner() (common.Address, error) {
+	return _RegistrarAbstract.Contract.Owner(&_RegistrarAbstract.CallOpts)
+}
+
+// ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
+//
+// Solidity: function changeOwner(_newOwner address) returns()
+func (_RegistrarAbstract *RegistrarAbstractTransactor) ChangeOwner(opts *bind.TransactOpts, _newOwner common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "changeOwner", _newOwner)
+}
+
+// ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
+//
+// Solidity: function changeOwner(_newOwner address) returns()
+func (_RegistrarAbstract *RegistrarAbstractSession) ChangeOwner(_newOwner common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.ChangeOwner(&_RegistrarAbstract.TransactOpts, _newOwner)
+}
+
+// ChangeOwner is a paid mutator transaction binding the contract method 0xa6f9dae1.
+//
+// Solidity: function changeOwner(_newOwner address) returns()
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) ChangeOwner(_newOwner common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.ChangeOwner(&_RegistrarAbstract.TransactOpts, _newOwner)
+}
+
+// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
+//
+// Solidity: function collectDeposit() returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactor) CollectDeposit(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "collectDeposit")
+}
+
+// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
+//
+// Solidity: function collectDeposit() returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractSession) CollectDeposit() (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.CollectDeposit(&_RegistrarAbstract.TransactOpts)
+}
+
+// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
+//
+// Solidity: function collectDeposit() returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) CollectDeposit() (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.CollectDeposit(&_RegistrarAbstract.TransactOpts)
+}
+
+// Compensate is a paid mutator transaction binding the contract method 0x8a1bd7c0.
+//
+// Solidity: function compensate(_beneficiary address, reward uint256) returns(compensated bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactor) Compensate(opts *bind.TransactOpts, _beneficiary common.Address, reward *big.Int) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "compensate", _beneficiary, reward)
+}
+
+// Compensate is a paid mutator transaction binding the contract method 0x8a1bd7c0.
+//
+// Solidity: function compensate(_beneficiary address, reward uint256) returns(compensated bool)
+func (_RegistrarAbstract *RegistrarAbstractSession) Compensate(_beneficiary common.Address, reward *big.Int) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.Compensate(&_RegistrarAbstract.TransactOpts, _beneficiary, reward)
+}
+
+// Compensate is a paid mutator transaction binding the contract method 0x8a1bd7c0.
+//
+// Solidity: function compensate(_beneficiary address, reward uint256) returns(compensated bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) Compensate(_beneficiary common.Address, reward *big.Int) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.Compensate(&_RegistrarAbstract.TransactOpts, _beneficiary, reward)
+}
+
+// DecrementOpenCases is a paid mutator transaction binding the contract method 0x8f6a8b03.
+//
+// Solidity: function decrementOpenCases(_address address) returns()
+func (_RegistrarAbstract *RegistrarAbstractTransactor) DecrementOpenCases(opts *bind.TransactOpts, _address common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "decrementOpenCases", _address)
+}
+
+// DecrementOpenCases is a paid mutator transaction binding the contract method 0x8f6a8b03.
+//
+// Solidity: function decrementOpenCases(_address address) returns()
+func (_RegistrarAbstract *RegistrarAbstractSession) DecrementOpenCases(_address common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.DecrementOpenCases(&_RegistrarAbstract.TransactOpts, _address)
+}
+
+// DecrementOpenCases is a paid mutator transaction binding the contract method 0x8f6a8b03.
+//
+// Solidity: function decrementOpenCases(_address address) returns()
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) DecrementOpenCases(_address common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.DecrementOpenCases(&_RegistrarAbstract.TransactOpts, _address)
+}
+
+// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
+//
+// Solidity: function deposit(epochs uint256) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactor) Deposit(opts *bind.TransactOpts, epochs *big.Int) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "deposit", epochs)
+}
+
+// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
+//
+// Solidity: function deposit(epochs uint256) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractSession) Deposit(epochs *big.Int) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.Deposit(&_RegistrarAbstract.TransactOpts, epochs)
+}
+
+// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
+//
+// Solidity: function deposit(epochs uint256) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) Deposit(epochs *big.Int) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.Deposit(&_RegistrarAbstract.TransactOpts, epochs)
+}
+
+// IncrementOpenCases is a paid mutator transaction binding the contract method 0x27f730ee.
+//
+// Solidity: function incrementOpenCases(_address address) returns()
+func (_RegistrarAbstract *RegistrarAbstractTransactor) IncrementOpenCases(opts *bind.TransactOpts, _address common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "incrementOpenCases", _address)
+}
+
+// IncrementOpenCases is a paid mutator transaction binding the contract method 0x27f730ee.
+//
+// Solidity: function incrementOpenCases(_address address) returns()
+func (_RegistrarAbstract *RegistrarAbstractSession) IncrementOpenCases(_address common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.IncrementOpenCases(&_RegistrarAbstract.TransactOpts, _address)
+}
+
+// IncrementOpenCases is a paid mutator transaction binding the contract method 0x27f730ee.
+//
+// Solidity: function incrementOpenCases(_address address) returns()
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) IncrementOpenCases(_address common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.IncrementOpenCases(&_RegistrarAbstract.TransactOpts, _address)
+}
+
+// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
+//
+// Solidity: function isRegister(player address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactor) IsRegister(opts *bind.TransactOpts, player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "isRegister", player)
+}
+
+// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
+//
+// Solidity: function isRegister(player address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractSession) IsRegister(player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.IsRegister(&_RegistrarAbstract.TransactOpts, player)
+}
+
+// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
+//
+// Solidity: function isRegister(player address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) IsRegister(player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.IsRegister(&_RegistrarAbstract.TransactOpts, player)
+}
+
+// Register is a paid mutator transaction binding the contract method 0x4420e486.
+//
+// Solidity: function register(_player address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactor) Register(opts *bind.TransactOpts, _player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "register", _player)
+}
+
+// Register is a paid mutator transaction binding the contract method 0x4420e486.
+//
+// Solidity: function register(_player address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractSession) Register(_player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.Register(&_RegistrarAbstract.TransactOpts, _player)
+}
+
+// Register is a paid mutator transaction binding the contract method 0x4420e486.
+//
+// Solidity: function register(_player address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) Register(_player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.Register(&_RegistrarAbstract.TransactOpts, _player)
+}
+
+// SetSwearContractAddress is a paid mutator transaction binding the contract method 0xe59a9bfa.
+//
+// Solidity: function setSwearContractAddress(_swearAddress address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactor) SetSwearContractAddress(opts *bind.TransactOpts, _swearAddress common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "setSwearContractAddress", _swearAddress)
+}
+
+// SetSwearContractAddress is a paid mutator transaction binding the contract method 0xe59a9bfa.
+//
+// Solidity: function setSwearContractAddress(_swearAddress address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractSession) SetSwearContractAddress(_swearAddress common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.SetSwearContractAddress(&_RegistrarAbstract.TransactOpts, _swearAddress)
+}
+
+// SetSwearContractAddress is a paid mutator transaction binding the contract method 0xe59a9bfa.
+//
+// Solidity: function setSwearContractAddress(_swearAddress address) returns(bool)
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) SetSwearContractAddress(_swearAddress common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.SetSwearContractAddress(&_RegistrarAbstract.TransactOpts, _swearAddress)
+}
+
+// UnRegister is a paid mutator transaction binding the contract method 0x27c95625.
+//
+// Solidity: function unRegister(_player address) returns()
+func (_RegistrarAbstract *RegistrarAbstractTransactor) UnRegister(opts *bind.TransactOpts, _player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.contract.Transact(opts, "unRegister", _player)
+}
+
+// UnRegister is a paid mutator transaction binding the contract method 0x27c95625.
+//
+// Solidity: function unRegister(_player address) returns()
+func (_RegistrarAbstract *RegistrarAbstractSession) UnRegister(_player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.UnRegister(&_RegistrarAbstract.TransactOpts, _player)
+}
+
+// UnRegister is a paid mutator transaction binding the contract method 0x27c95625.
+//
+// Solidity: function unRegister(_player address) returns()
+func (_RegistrarAbstract *RegistrarAbstractTransactorSession) UnRegister(_player common.Address) (*types.Transaction, error) {
+	return _RegistrarAbstract.Contract.UnRegister(&_RegistrarAbstract.TransactOpts, _player)
+}
+
 // SampleTokenABI is the input ABI used to generate the binding from.
 const SampleTokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"balance\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"beneficiary\",\"type\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\"},{\"name\":\"ref\",\"type\":\"bytes32\"}],\"name\":\"createTokens\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"remaining\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"inputs\":[{\"name\":\"initialSupply\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"beneficiary\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":true,\"name\":\"ref\",\"type\":\"bytes32\"}],\"name\":\"TokenMined\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"}]"
 
 // SampleTokenBin is the compiled bytecode used for deploying new contracts.
-const SampleTokenBin = `0x6060604052341561000f57600080fd5b60405160208061069d833981016040528080519150505b5b60038054600160a060020a03191633600160a060020a03161790555b600160a060020a03331660009081526001602052604081208290558190555b505b61062a806100736000396000f300606060405236156100965763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009b57806318160ddd146100d157806323b872dd146100f657806370a08231146101325780638da5cb5b14610163578063a3aff92314610192578063a6f9dae1146101b9578063a9059cbb146101da578063dd62ed3e14610210575b600080fd5b34156100a657600080fd5b6100bd600160a060020a0360043516602435610247565b604051901515815260200160405180910390f35b34156100dc57600080fd5b6100e46102b4565b60405190815260200160405180910390f35b341561010157600080fd5b6100bd600160a060020a03600435811690602435166044356102ba565b604051901515815260200160405180910390f35b341561013d57600080fd5b6100e4600160a060020a03600435166102fd565b60405190815260200160405180910390f35b341561016e57600080fd5b61017661031c565b604051600160a060020a03909116815260200160405180910390f35b341561019d57600080fd5b6101b7600160a060020a036004351660243560443561032b565b005b34156101c457600080fd5b6101b7600160a060020a03600435166103e8565b005b34156101e557600080fd5b6100bd600160a060020a0360043516602435610430565b604051901515815260200160405180910390f35b341561021b57600080fd5b6100e4600160a060020a03600435811690602435166104d7565b60405190815260200160405180910390f35b600160a060020a03338116600081815260026020908152604080832094871680845294909152808220859055909291907f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9259085905190815260200160405180910390a35060015b92915050565b60005481565b600160a060020a0380841660009081526002602090815260408083203390941683529290529081208054830190556102f3848484610504565b90505b9392505050565b600160a060020a0381166000908152600160205260409020545b919050565b600354600160a060020a031681565b60035433600160a060020a0390811691161461034657600080fd5b600160a060020a038316600081815260016020526040808220805486019055815485019091558291907fdfb81fb379557413b0a951b4d7bf7a9df393801d8c539d5e201d6a8daeb913b99085905190815260200160405180910390a382600160a060020a031660007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef8460405190815260200160405180910390a35b5b505050565b60035433600160a060020a0390811691161461040357600080fd5b6003805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b5b50565b600160a060020a0333166000908152600160205260408120548290108015906104595750600082115b1561009657600160a060020a033381166000818152600160205260408082208054879003905592861680825290839020805486019055917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a35060016102ae565b600080fd5b5b92915050565b600160a060020a038083166000908152600260209081526040808320938516835292905220545b92915050565b600160a060020a0383166000908152600160205260408120548290108015906105545750600160a060020a0380851660009081526002602090815260408083203390941683529290522054829010155b80156105605750600082115b1561009657600160a060020a03808416600081815260016020908152604080832080548801905588851680845281842080548990039055600283528184203390961684529490915290819020805486900390559091907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a35060016102f6565b600080fd5b5b93925050505600a165627a7a7230582017d6ee228e1d56570e3275f4764866bfc7c63c9f4c98989cccfcb79336f2900a0029`
+const SampleTokenBin = `0x6060604052341561000f57600080fd5b60405160208061069d833981016040528080519150505b5b60038054600160a060020a03191633600160a060020a03161790555b600160a060020a03331660009081526001602052604081208290558190555b505b61062a806100736000396000f300606060405236156100965763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461009b57806318160ddd146100d157806323b872dd146100f657806370a08231146101325780638da5cb5b14610163578063a3aff92314610192578063a6f9dae1146101b9578063a9059cbb146101da578063dd62ed3e14610210575b600080fd5b34156100a657600080fd5b6100bd600160a060020a0360043516602435610247565b604051901515815260200160405180910390f35b34156100dc57600080fd5b6100e46102b4565b60405190815260200160405180910390f35b341561010157600080fd5b6100bd600160a060020a03600435811690602435166044356102ba565b604051901515815260200160405180910390f35b341561013d57600080fd5b6100e4600160a060020a03600435166102fd565b60405190815260200160405180910390f35b341561016e57600080fd5b61017661031c565b604051600160a060020a03909116815260200160405180910390f35b341561019d57600080fd5b6101b7600160a060020a036004351660243560443561032b565b005b34156101c457600080fd5b6101b7600160a060020a03600435166103e8565b005b34156101e557600080fd5b6100bd600160a060020a0360043516602435610430565b604051901515815260200160405180910390f35b341561021b57600080fd5b6100e4600160a060020a03600435811690602435166104d7565b60405190815260200160405180910390f35b600160a060020a03338116600081815260026020908152604080832094871680845294909152808220859055909291907f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9259085905190815260200160405180910390a35060015b92915050565b60005481565b600160a060020a0380841660009081526002602090815260408083203390941683529290529081208054830190556102f3848484610504565b90505b9392505050565b600160a060020a0381166000908152600160205260409020545b919050565b600354600160a060020a031681565b60035433600160a060020a0390811691161461034657600080fd5b600160a060020a038316600081815260016020526040808220805486019055815485019091558291907fdfb81fb379557413b0a951b4d7bf7a9df393801d8c539d5e201d6a8daeb913b99085905190815260200160405180910390a382600160a060020a031660007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef8460405190815260200160405180910390a35b5b505050565b60035433600160a060020a0390811691161461040357600080fd5b6003805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b5b50565b600160a060020a0333166000908152600160205260408120548290108015906104595750600082115b1561009657600160a060020a033381166000818152600160205260408082208054879003905592861680825290839020805486019055917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a35060016102ae565b600080fd5b5b92915050565b600160a060020a038083166000908152600260209081526040808320938516835292905220545b92915050565b600160a060020a0383166000908152600160205260408120548290108015906105545750600160a060020a0380851660009081526002602090815260408083203390941683529290522054829010155b80156105605750600082115b1561009657600160a060020a03808416600081815260016020908152604080832080548801905588851680845281842080548990039055600283528184203390961684529490915290819020805486900390559091907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a35060016102f6565b600080fd5b5b93925050505600a165627a7a72305820173eda34207dcd600fa74ec806c217ee4224898a3635c25801f2177aa27c3bf30029`
 
 // DeploySampleToken deploys a new Ethereum contract, binding an instance of SampleToken to it.
 func DeploySampleToken(auth *bind.TransactOpts, backend bind.ContractBackend, initialSupply *big.Int) (common.Address, *types.Transaction, *SampleToken, error) {
@@ -565,7 +947,7 @@ func (_SampleToken *SampleTokenTransactorSession) TransferFrom(_from common.Addr
 const StandardTokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"balance\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"remaining\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"}]"
 
 // StandardTokenBin is the compiled bytecode used for deploying new contracts.
-const StandardTokenBin = `0x6060604052341561000f57600080fd5b5b61043b8061001f6000396000f300606060405236156100755763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461007a57806318160ddd146100b057806323b872dd146100d557806370a0823114610111578063a9059cbb14610142578063dd62ed3e14610178575b600080fd5b341561008557600080fd5b61009c600160a060020a03600435166024356101af565b604051901515815260200160405180910390f35b34156100bb57600080fd5b6100c361021c565b60405190815260200160405180910390f35b34156100e057600080fd5b61009c600160a060020a0360043581169060243516604435610222565b604051901515815260200160405180910390f35b341561011c57600080fd5b6100c3600160a060020a036004351661031c565b60405190815260200160405180910390f35b341561014d57600080fd5b61009c600160a060020a036004351660243561033b565b604051901515815260200160405180910390f35b341561018357600080fd5b6100c3600160a060020a03600435811690602435166103e2565b60405190815260200160405180910390f35b600160a060020a03338116600081815260026020908152604080832094871680845294909152808220859055909291907f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9259085905190815260200160405180910390a35060015b92915050565b60005481565b600160a060020a0383166000908152600160205260408120548290108015906102725750600160a060020a0380851660009081526002602090815260408083203390941683529290522054829010155b801561027e5750600082115b1561007557600160a060020a03808416600081815260016020908152604080832080548801905588851680845281842080548990039055600283528184203390961684529490915290819020805486900390559091907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a3506001610314565b600080fd5b5b9392505050565b600160a060020a0381166000908152600160205260409020545b919050565b600160a060020a0333166000908152600160205260408120548290108015906103645750600082115b1561007557600160a060020a033381166000818152600160205260408082208054879003905592861680825290839020805486019055917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a3506001610216565b600080fd5b5b92915050565b600160a060020a038083166000908152600260209081526040808320938516835292905220545b929150505600a165627a7a72305820b37ca6350c1f91620522116c51f41f9c58ee7c7689b6159e1275017d0f8e5c500029`
+const StandardTokenBin = `0x6060604052341561000f57600080fd5b5b61043b8061001f6000396000f300606060405236156100755763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461007a57806318160ddd146100b057806323b872dd146100d557806370a0823114610111578063a9059cbb14610142578063dd62ed3e14610178575b600080fd5b341561008557600080fd5b61009c600160a060020a03600435166024356101af565b604051901515815260200160405180910390f35b34156100bb57600080fd5b6100c361021c565b60405190815260200160405180910390f35b34156100e057600080fd5b61009c600160a060020a0360043581169060243516604435610222565b604051901515815260200160405180910390f35b341561011c57600080fd5b6100c3600160a060020a036004351661031c565b60405190815260200160405180910390f35b341561014d57600080fd5b61009c600160a060020a036004351660243561033b565b604051901515815260200160405180910390f35b341561018357600080fd5b6100c3600160a060020a03600435811690602435166103e2565b60405190815260200160405180910390f35b600160a060020a03338116600081815260026020908152604080832094871680845294909152808220859055909291907f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9259085905190815260200160405180910390a35060015b92915050565b60005481565b600160a060020a0383166000908152600160205260408120548290108015906102725750600160a060020a0380851660009081526002602090815260408083203390941683529290522054829010155b801561027e5750600082115b1561007557600160a060020a03808416600081815260016020908152604080832080548801905588851680845281842080548990039055600283528184203390961684529490915290819020805486900390559091907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a3506001610314565b600080fd5b5b9392505050565b600160a060020a0381166000908152600160205260409020545b919050565b600160a060020a0333166000908152600160205260408120548290108015906103645750600082115b1561007557600160a060020a033381166000818152600160205260408082208054879003905592861680825290839020805486019055917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a3506001610216565b600080fd5b5b92915050565b600160a060020a038083166000908152600260209081526040808320938516835292905220545b929150505600a165627a7a72305820a749468146cb66a5f2f08e4a25bd28b4fd1f4c68e7f83913e53e21c6434c5be80029`
 
 // DeployStandardToken deploys a new Ethereum contract, binding an instance of StandardToken to it.
 func DeployStandardToken(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *StandardToken, error) {
@@ -849,18 +1231,18 @@ func (_StandardToken *StandardTokenTransactorSession) TransferFrom(_from common.
 }
 
 // SwearGameABI is the input ABI used to generate the binding from.
-const SwearGameABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"collectDeposit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"player\",\"type\":\"address\"}],\"name\":\"isRegister\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"unRegister\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"playerCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"leaveGame\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"register\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"getStatus\",\"outputs\":[{\"name\":\"status\",\"type\":\"uint8\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"trialRules\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"ids\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"epochs\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":true,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"serviceId\",\"type\":\"bytes32\"}],\"name\":\"newCase\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"trial\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"players\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"deposits\",\"outputs\":[{\"name\":\"inDepositPeriod\",\"type\":\"bool\"},{\"name\":\"vestingPeriod\",\"type\":\"uint256\"},{\"name\":\"depositedAmount\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"inputs\":[{\"name\":\"_token\",\"type\":\"address\"},{\"name\":\"_trialRules\",\"type\":\"address\"}],\"payable\":false,\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"decide\",\"type\":\"string\"}],\"name\":\"Decision\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"}],\"name\":\"NewCaseOpened\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"}],\"name\":\"NewEvidenceSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"CaseResolved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Payment\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"playerId\",\"type\":\"address\"}],\"name\":\"NewPlayer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"deposit\",\"type\":\"uint256\"}],\"name\":\"AdditionalDepositRequired\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"depositAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"deposit\",\"type\":\"uint256\"}],\"name\":\"DepositStaked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"reward\",\"type\":\"uint256\"}],\"name\":\"Compensate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"playerId\",\"type\":\"address\"}],\"name\":\"PlayerLeftGame\",\"type\":\"event\"}]"
+const SwearGameABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"registrar\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"leaveGame\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"getStatus\",\"outputs\":[{\"name\":\"status\",\"type\":\"uint8\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"trialRules\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"ids\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"serviceId\",\"type\":\"bytes32\"}],\"name\":\"newCase\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"trial\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"inputs\":[{\"name\":\"_registrar\",\"type\":\"address\"},{\"name\":\"_trialRules\",\"type\":\"address\"}],\"payable\":false,\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"decide\",\"type\":\"string\"}],\"name\":\"Decision\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"}],\"name\":\"NewCaseOpened\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"CaseResolved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"}],\"name\":\"NewEvidenceSubmitted\",\"type\":\"event\"}]"
 
 // SwearGameBin is the compiled bytecode used for deploying new contracts.
-const SwearGameBin = `0x6060604052341561000f57600080fd5b60405160408061166183398101604052808051919060200180519150505b5b60008054600160a060020a03191633600160a060020a03161790555b60028054600160a060020a03808516600160a060020a031992831617909255600380549284169290911691909117905560006001555b50505b6115cf806100926000396000f300606060405236156100d55763ffffffff60e060020a60003504166302336f9281146100da57806322fdef941461010157806327c9562514610134578063302bcc57146101555780633e95d9551461017a5780634420e4861461019b5780635de28ae0146101ce5780638a29d969146101fa5780638da5cb5b146102295780639f20bc9214610258578063a6f9dae11461028c578063b6b55f25146102ad578063cc345e0a146102cc578063cf343bb8146102f6578063e2eb41ff14610320578063fc0c546a14610353578063fc7e286d14610382575b600080fd5b34156100e557600080fd5b6100ed6103c7565b604051901515815260200160405180910390f35b341561010c57600080fd5b6100ed600160a060020a0360043516610518565b604051901515815260200160405180910390f35b341561013f57600080fd5b610153600160a060020a036004351661053a565b005b341561016057600080fd5b6101686105cc565b60405190815260200160405180910390f35b341561018557600080fd5b610153600160a060020a03600435166105d2565b005b34156101a657600080fd5b6100ed600160a060020a036004351661066b565b604051901515815260200160405180910390f35b34156101d957600080fd5b6101e460043561084b565b60405160ff909116815260200160405180910390f35b341561020557600080fd5b61020d610866565b604051600160a060020a03909116815260200160405180910390f35b341561023457600080fd5b61020d610875565b604051600160a060020a03909116815260200160405180910390f35b341561026357600080fd5b610168600160a060020a0360043516602435610884565b60405190815260200160405180910390f35b341561029757600080fd5b610153600160a060020a03600435166108b6565b005b6100ed6004356108fe565b604051901515815260200160405180910390f35b34156102d757600080fd5b6100ed600435610aff565b604051901515815260200160405180910390f35b341561030157600080fd5b6100ed600435610c16565b604051901515815260200160405180910390f35b341561032b57600080fd5b6100ed600160a060020a0360043516610c63565b604051901515815260200160405180910390f35b341561035e57600080fd5b61020d610c78565b604051600160a060020a03909116815260200160405180910390f35b341561038d57600080fd5b6103a1600160a060020a0360043516610c87565b604051921515835260208301919091526040808301919091526060909101905180910390f35b600160a060020a03331660009081526007602052604081205481908190156103ee57600080fd5b600160a060020a0333166000908152600460205260409020805490925060ff16801561041e575043826001015411155b1561050e575060028101546060604051908101604090815260008083526020808401829052828401829052600160a060020a033316825260049052208151815460ff191690151517815560208201518160010155604082015160029182015554600160a060020a031690506323b872dd30338460006040516020015260405160e060020a63ffffffff8616028152600160a060020a0393841660048201529190921660248201526044810191909152606401602060405180830381600087803b15156104e957600080fd5b6102c65a03f115156104fa57600080fd5b505050604051805190505060019250610513565b600092505b505090565b600160a060020a03331660009081526005602052604090205460ff165b919050565b600160a060020a03811660009081526005602052604090205460ff16151561056157600080fd5b7f3def0aea61e344e47b98a0523a5825c0919e88f7b33d0ac7f889a7654880f9a581604051600160a060020a03909116815260200160405180910390a1600160a060020a0381166000908152600560205260409020805460ff19169055600180546000190190555b50565b60015481565b60005b600160a060020a03331660009081526008602052604090205481101561065d57600160a060020a0333166000908152600860205260408120805460069291908490811061061e57fe5b906000526020600020900160005b50548152602081019190915260400160002060020154610100900460ff161561065457600080fd5b5b6001016105d5565b6106663361053a565b5b5050565b60008054819033600160a060020a0390811691161461068957600080fd5b600160a060020a03831660009081526005602052604090205460ff16156106af57600080fd5b600354600160a060020a0316633d18b9126000604051602001526040518163ffffffff1660e060020a028152600401602060405180830381600087803b15156106f757600080fd5b6102c65a03f1151561070857600080fd5b5050506040518051905090506001546000141561074d5760008054600160a060020a03168152600460205260409020600201548190101561074857600080fd5b6107d3565b60015460008054600160a060020a031681526004602052604090206002015482919081151561077857fe5b0410156107d35760008054600160a060020a031681526004602052604090819020600201547fa8ff0fbf8dc82e5914523ed3a828920f55ab93494c59933e8c45d79f8bba70d7915190815260200160405180910390a1600080fd5b5b600160a060020a03831660009081526005602052604090819020805460ff191660019081179091558054810190557f52e92d4898337244a39bd42674ac561eadfd3959e947deec1c0ab82dd58b5a7590849051600160a060020a03909116815260200160405180910390a1600191505b5b50919050565b60008181526006602052604090206002015460ff165b919050565b600354600160a060020a031681565b600054600160a060020a031681565b60086020528160005260406000208181548110151561089f57fe5b906000526020600020900160005b91509150505481565b60005433600160a060020a039081169116146108d157600080fd5b6000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b5b50565b600254600090600160a060020a03166323b872dd333034856040516020015260405160e060020a63ffffffff8616028152600160a060020a0393841660048201529190921660248201526044810191909152606401602060405180830381600087803b151561096c57600080fd5b6102c65a03f1151561097d57600080fd5b50505060405180519050151561099257600080fd5b600160a060020a03331660009081526004602052604090205460ff16156109d957600160a060020a0333166000908152600460205260409020600201805434019055610a9e565b60606040519081016040908152600182526003546020830191600160a060020a039091169063757991a89060009051602001526040518163ffffffff1660e060020a028152600401602060405180830381600087803b1515610a3a57600080fd5b6102c65a03f11515610a4b57600080fd5b5050506040518051850243018252503460209182015233600160a060020a031660009081526004909152604090208151815460ff1916901515178155602082015181600101556040820151600290910155505b600160a060020a03331660009081526004602052604090819020600201547f3a7e173a9698235104076a0f536c5169527adecd20d0938c7c156ddf776c8591913491905191825260208201526040908101905180910390a15060015b919050565b600160a060020a033316600090815260056020526040812054819060ff161515610b2857600080fd5b600354610b989033908590600160a060020a03166307e5ae5f6000604051602001526040518163ffffffff1660e060020a028152600401602060405180830381600087803b1515610b7857600080fd5b6102c65a03f11515610b8957600080fd5b50505060405180519050610cac565b9050801515610baa5760009150610844565b600160a060020a03338116600081815260076020908152604080832080546001908101909155835490951683528083208054860190559282526008905220805490918101610bf88382611558565b916000526020600020900160005b5082905550600191505b50919050565b600160a060020a03331660009081526005602052604081205460ff161515610c3d57600080fd5b610c4682610dca565b1515610c5157600080fd5b610c5a82610dec565b5060015b919050565b60056020526000908152604090205460ff1681565b600254600160a060020a031681565b60046020526000908152604090208054600182015460029092015460ff909116919083565b6000838342604051600160a060020a03939093166c0100000000000000000000000002835260148301919091526034820152605401604051908190039020600081815260066020526040902060020154909150610100900460ff1615610d1457506000610dc3565b60806040519081016040908152600160a060020a0386168252602080830186905260ff8516828401526001606084015260008481526006909152208151815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a039190911617815560208201516001820155604082015160028201805460ff191660ff9290921691909117905560608201516002909101805460ff929092166101000261ff0019909216919091179055505b9392505050565b600081815260066020526040902060020154610100900460ff1615155b919050565b600080600080600080610dfe8761084b565b9550610e09876111f9565b945094505b60005b60ff8781169116146111ef57600354600160a060020a031663db0615638760006040516020015260405160e060020a63ffffffff841602815260ff9091166004820152602401602060405180830381600087803b1515610e7057600080fd5b6102c65a03f11515610e8157600080fd5b5050506040518051935050600160a060020a0383161515610eab57610ea4611221565b91506111ef565b600354600160a060020a031663fcc0a2ae888860006040516020015260405160e060020a63ffffffff8516028152600481019290925260ff166024820152604401602060405180830381600087803b1515610f0557600080fd5b6102c65a03f11515610f1657600080fd5b5050506040518051915050600160a060020a038316637aba9a6788868860006040516020015260405160e060020a63ffffffff861602815260048101939093526024830191909152600160a060020a03166044820152606401602060405180830381600087803b1515610f8857600080fd5b6102c65a03f11515610f9957600080fd5b505050604051805190508015610fad575080155b1561103b5782600160a060020a031663c4b4528388868860006040516020015260405160e060020a63ffffffff861602815260048101939093526024830191909152600160a060020a03166044820152606401602060405180830381600087803b151561101957600080fd5b6102c65a03f1151561102a57600080fd5b5050506040518051905091506110cc565b600354600160a060020a031663a7edcbe4888860006040516020015260405160e060020a63ffffffff8516028152600481019290925260ff166024820152604401602060405180830381600087803b151561109557600080fd5b6102c65a03f115156110a657600080fd5b50505060405180519050806110b9575080155b156110c757600291506110cc565b600191505b5b5b60025b8260028111156110dd57fe5b14156110e8576111ef565b600354600160a060020a031663d39eb30183600281111561110557fe5b8860006040516020015260405160e060020a63ffffffff851602815260ff928316600482015291166024820152604401602060405180830381600087803b151561114e57600080fd5b6102c65a03f1151561115f57600080fd5b5050506040518051905095506111758787611227565b5060015b60ff168660ff161480611193575060025b60ff168660ff16145b156111ea576111a387878761126c565b5060005b600160a060020a0380871660009081526007602052604080822080546000199081019091558254909316825290208054909101905595506111e88787611227565b505b610e0e565b5b50505050505050565b60008181526006602052604090208054600190910154600160a060020a03909116905b915091565b60025b90565b6000805433600160a060020a039081169116141561124457600080fd5b506000828152600660205260409020600201805460ff191660ff831617905560015b92915050565b6000808060025b60ff168560ff1614156112e4577f3f379bb1eae8d950e4e7920751b198b0471a8c95bee23d7f7336e4d5ec70f3398685600088604051938452600160a060020a03909216602084015260408084019190915260ff90911660608301526080909101905180910390a1600092506113c5565b600354600160a060020a0316633d18b9126000604051602001526040518163ffffffff1660e060020a028152600401602060405180830381600087803b151561132c57600080fd5b6102c65a03f1151561133d57600080fd5b50505060405180519050915061135384836113ce565b905061135e866114d4565b6113678461053a565b7f3f379bb1eae8d950e4e7920751b198b0471a8c95bee23d7f7336e4d5ec70f33986858488604051938452600160a060020a03909216602084015260408084019190915260ff90911660608301526080909101905180910390a18092505b50509392505050565b600254600090600160a060020a03166323b872dd308585856040516020015260405160e060020a63ffffffff8616028152600160a060020a0393841660048201529190921660248201526044810191909152606401602060405180830381600087803b151561143c57600080fd5b6102c65a03f1151561144d57600080fd5b505050604051805191505080151561146457600080fd5b60008054600160a060020a031681526004602052604090819020600201805484900390557f92c2a7173158b7618078365b4ad89fd1f774ae4aa04f39e10b966b47f469d34b908490849051600160a060020a03909216825260208201526040908101905180910390a15b92915050565b60005b60008281526006602052604090206002015460ff908116911614156114fb57600080fd5b6000818152600660205260408120805473ffffffffffffffffffffffffffffffffffffffff19168155600201805461ff00191690555b6000828152600660205260409020600201805460ff191660ff929092169190911790555b50565b81548183558181151161157c5760008381526020902061157c918101908301611582565b5b505050565b61122491905b8082111561159c5760008155600101611588565b5090565b905600a165627a7a723058208dc176beee4fce3e9431beb257eb71630b3d1e5d399e77a18e2d85eddb8df1e00029`
+const SwearGameBin = `0x6060604052341561000f57600080fd5b60405160408061112683398101604052808051919060200180519150505b5b60008054600160a060020a03191633600160a060020a03161790555b60028054600160a060020a031916600160a060020a0384811691909117918290551663e59a9bfa306000604051602001526040517c010000000000000000000000000000000000000000000000000000000063ffffffff8416028152600160a060020a039091166004820152602401602060405180830381600087803b15156100d257600080fd5b6102c65a03f115156100e357600080fd5b5050506040518051905015156100f857600080fd5b60018054600160a060020a031916600160a060020a0383161790555b50505b611000806101266000396000f3006060604052361561007d5763ffffffff60e060020a6000350416632b20e39781146100825780633e95d955146100b15780635de28ae0146100d25780638a29d969146100fe5780638da5cb5b1461012d5780639f20bc921461015c578063a6f9dae114610190578063cc345e0a146101b1578063cf343bb8146101db575b600080fd5b341561008d57600080fd5b610095610205565b604051600160a060020a03909116815260200160405180910390f35b34156100bc57600080fd5b6100d0600160a060020a0360043516610214565b005b34156100dd57600080fd5b6100e8600435610308565b60405160ff909116815260200160405180910390f35b341561010957600080fd5b610095610323565b604051600160a060020a03909116815260200160405180910390f35b341561013857600080fd5b610095610332565b604051600160a060020a03909116815260200160405180910390f35b341561016757600080fd5b61017e600160a060020a0360043516602435610341565b60405190815260200160405180910390f35b341561019b57600080fd5b6100d0600160a060020a0360043516610373565b005b34156101bc57600080fd5b6101c76004356103bb565b604051901515815260200160405180910390f35b34156101e657600080fd5b6101c76004356105d5565b604051901515815260200160405180910390f35b600254600160a060020a031681565b60005b600160a060020a03331660009081526004602052604090205481101561029f57600160a060020a0333166000908152600460205260408120805460039291908490811061026057fe5b906000526020600020900160005b50548152602081019190915260400160002060020154610100900460ff161561029657600080fd5b5b600101610217565b600254600160a060020a03166327c956253360405160e060020a63ffffffff8416028152600160a060020a039091166004820152602401600060405180830381600087803b15156102ef57600080fd5b6102c65a03f1151561030057600080fd5b5050505b5050565b60008181526003602052604090206002015460ff165b919050565b600154600160a060020a031681565b600054600160a060020a031681565b60046020528160005260406000208181548110151561035c57fe5b906000526020600020900160005b91509150505481565b60005433600160a060020a0390811691161461038e57600080fd5b6000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b5b50565b6002546000908190600160a060020a03166322fdef9433836040516020015260405160e060020a63ffffffff8416028152600160a060020a039091166004820152602401602060405180830381600087803b151561041857600080fd5b6102c65a03f1151561042957600080fd5b50505060405180519050151561043e57600080fd5b6001546104ae9033908590600160a060020a03166307e5ae5f6000604051602001526040518163ffffffff1660e060020a028152600401602060405180830381600087803b151561048e57600080fd5b6102c65a03f1151561049f57600080fd5b5050506040518051905061067c565b90508015156104c057600091506105cf565b600254600160a060020a03166327f730ee3360405160e060020a63ffffffff8416028152600160a060020a039091166004820152602401600060405180830381600087803b151561051057600080fd5b6102c65a03f1151561052157600080fd5b5050600254600054600160a060020a0391821692506327f730ee911660405160e060020a63ffffffff8416028152600160a060020a039091166004820152602401600060405180830381600087803b151561057b57600080fd5b6102c65a03f1151561058c57600080fd5b505050600160a060020a03331660009081526004602052604090208054600181016105b78382610f89565b916000526020600020900160005b5082905550600191505b50919050565b600254600090600160a060020a03166322fdef9433836040516020015260405160e060020a63ffffffff8416028152600160a060020a039091166004820152602401602060405180830381600087803b151561063057600080fd5b6102c65a03f1151561064157600080fd5b50505060405180519050151561065657600080fd5b61065f8261079a565b151561066a57600080fd5b610673826107bc565b5060015b919050565b6000838342604051600160a060020a03939093166c0100000000000000000000000002835260148301919091526034820152605401604051908190039020600081815260036020526040902060020154909150610100900460ff16156106e457506000610793565b60806040519081016040908152600160a060020a0386168252602080830186905260ff8516828401526001606084015260008481526003909152208151815473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a039190911617815560208201516001820155604082015160028201805460ff191660ff9290921691909117905560608201516002909101805460ff929092166101000261ff0019909216919091179055505b9392505050565b600081815260036020526040902060020154610100900460ff1615155b919050565b6000806000806000806107ce87610308565b95506107d987610c64565b945094505b60005b60ff878116911614610c5a57600154600160a060020a031663db0615638760006040516020015260405160e060020a63ffffffff841602815260ff9091166004820152602401602060405180830381600087803b151561084057600080fd5b6102c65a03f1151561085157600080fd5b5050506040518051935050600160a060020a038316151561087b57610874610c8c565b9150610c5a565b600154600160a060020a031663fcc0a2ae888860006040516020015260405160e060020a63ffffffff8516028152600481019290925260ff166024820152604401602060405180830381600087803b15156108d557600080fd5b6102c65a03f115156108e657600080fd5b5050506040518051915050600160a060020a038316637aba9a6788868860006040516020015260405160e060020a63ffffffff861602815260048101939093526024830191909152600160a060020a03166044820152606401602060405180830381600087803b151561095857600080fd5b6102c65a03f1151561096957600080fd5b50505060405180519050801561097d575080155b15610a0b5782600160a060020a031663c4b4528388868860006040516020015260405160e060020a63ffffffff861602815260048101939093526024830191909152600160a060020a03166044820152606401602060405180830381600087803b15156109e957600080fd5b6102c65a03f115156109fa57600080fd5b505050604051805190509150610a9c565b600154600160a060020a031663a7edcbe4888860006040516020015260405160e060020a63ffffffff8516028152600481019290925260ff166024820152604401602060405180830381600087803b1515610a6557600080fd5b6102c65a03f11515610a7657600080fd5b5050506040518051905080610a89575080155b15610a975760029150610a9c565b600191505b5b5b60025b826002811115610aad57fe5b1415610ab857610c5a565b600154600160a060020a031663d39eb301836002811115610ad557fe5b8860006040516020015260405160e060020a63ffffffff851602815260ff928316600482015291166024820152604401602060405180830381600087803b1515610b1e57600080fd5b6102c65a03f11515610b2f57600080fd5b505050604051805190509550610b458787610c92565b5060015b60ff168660ff161480610b63575060025b60ff168660ff16145b15610c5557610b73878787610cd7565b5060005b600254909650600160a060020a0316638f6a8b038660405160e060020a63ffffffff8416028152600160a060020a039091166004820152602401600060405180830381600087803b1515610bca57600080fd5b6102c65a03f11515610bdb57600080fd5b5050600254600054600160a060020a039182169250638f6a8b03911660405160e060020a63ffffffff8416028152600160a060020a039091166004820152602401600060405180830381600087803b1515610c3557600080fd5b6102c65a03f11515610c4657600080fd5b505050610c538787610c92565b505b6107de565b5b50505050505050565b60008181526003602052604090208054600190910154600160a060020a03909116905b915091565b60025b90565b6000805433600160a060020a0390811691161415610caf57600080fd5b506000828152600360205260409020600201805460ff191660ff831617905560015b92915050565b6000808060025b60ff168560ff161415610d4f577f3f379bb1eae8d950e4e7920751b198b0471a8c95bee23d7f7336e4d5ec70f3398685600088604051938452600160a060020a03909216602084015260408084019190915260ff90911660608301526080909101905180910390a160009250610efc565b600154600160a060020a0316633d18b9126000604051602001526040518163ffffffff1660e060020a028152600401602060405180830381600087803b1515610d9757600080fd5b6102c65a03f11515610da857600080fd5b5050506040518051600254909350600160a060020a03169050638a1bd7c0858460006040516020015260405160e060020a63ffffffff8516028152600160a060020a0390921660048301526024820152604401602060405180830381600087803b1515610e1457600080fd5b6102c65a03f11515610e2557600080fd5b505050604051805190509050610e3a86610f05565b600254600160a060020a03166327c956258560405160e060020a63ffffffff8416028152600160a060020a039091166004820152602401600060405180830381600087803b1515610e8a57600080fd5b6102c65a03f11515610e9b57600080fd5b5050507f3f379bb1eae8d950e4e7920751b198b0471a8c95bee23d7f7336e4d5ec70f33986858488604051938452600160a060020a03909216602084015260408084019190915260ff90911660608301526080909101905180910390a18092505b50509392505050565b60005b60008281526003602052604090206002015460ff90811691161415610f2c57600080fd5b6000818152600360205260408120805473ffffffffffffffffffffffffffffffffffffffff19168155600201805461ff00191690555b6000828152600360205260409020600201805460ff191660ff929092169190911790555b50565b815481835581811511610fad57600083815260209020610fad918101908301610fb3565b5b505050565b610c8f91905b80821115610fcd5760008155600101610fb9565b5090565b905600a165627a7a72305820bcb1899e3ad4ad3ab0e47886c9b875bf1b4fa849c1c21f7b7de1031a6ff3bb5d0029`
 
 // DeploySwearGame deploys a new Ethereum contract, binding an instance of SwearGame to it.
-func DeploySwearGame(auth *bind.TransactOpts, backend bind.ContractBackend, _token common.Address, _trialRules common.Address) (common.Address, *types.Transaction, *SwearGame, error) {
+func DeploySwearGame(auth *bind.TransactOpts, backend bind.ContractBackend, _registrar common.Address, _trialRules common.Address) (common.Address, *types.Transaction, *SwearGame, error) {
 	parsed, err := abi.JSON(strings.NewReader(SwearGameABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(SwearGameBin), backend, _token, _trialRules)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(SwearGameBin), backend, _registrar, _trialRules)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -994,46 +1376,6 @@ func (_SwearGame *SwearGameTransactorRaw) Transact(opts *bind.TransactOpts, meth
 	return _SwearGame.Contract.contract.Transact(opts, method, params...)
 }
 
-// Deposits is a free data retrieval call binding the contract method 0xfc7e286d.
-//
-// Solidity: function deposits( address) constant returns(inDepositPeriod bool, vestingPeriod uint256, depositedAmount uint256)
-func (_SwearGame *SwearGameCaller) Deposits(opts *bind.CallOpts, arg0 common.Address) (struct {
-	InDepositPeriod bool
-	VestingPeriod   *big.Int
-	DepositedAmount *big.Int
-}, error) {
-	ret := new(struct {
-		InDepositPeriod bool
-		VestingPeriod   *big.Int
-		DepositedAmount *big.Int
-	})
-	out := ret
-	err := _SwearGame.contract.Call(opts, out, "deposits", arg0)
-	return *ret, err
-}
-
-// Deposits is a free data retrieval call binding the contract method 0xfc7e286d.
-//
-// Solidity: function deposits( address) constant returns(inDepositPeriod bool, vestingPeriod uint256, depositedAmount uint256)
-func (_SwearGame *SwearGameSession) Deposits(arg0 common.Address) (struct {
-	InDepositPeriod bool
-	VestingPeriod   *big.Int
-	DepositedAmount *big.Int
-}, error) {
-	return _SwearGame.Contract.Deposits(&_SwearGame.CallOpts, arg0)
-}
-
-// Deposits is a free data retrieval call binding the contract method 0xfc7e286d.
-//
-// Solidity: function deposits( address) constant returns(inDepositPeriod bool, vestingPeriod uint256, depositedAmount uint256)
-func (_SwearGame *SwearGameCallerSession) Deposits(arg0 common.Address) (struct {
-	InDepositPeriod bool
-	VestingPeriod   *big.Int
-	DepositedAmount *big.Int
-}, error) {
-	return _SwearGame.Contract.Deposits(&_SwearGame.CallOpts, arg0)
-}
-
 // GetStatus is a free data retrieval call binding the contract method 0x5de28ae0.
 //
 // Solidity: function getStatus(id bytes32) constant returns(status uint8)
@@ -1112,82 +1454,30 @@ func (_SwearGame *SwearGameCallerSession) Owner() (common.Address, error) {
 	return _SwearGame.Contract.Owner(&_SwearGame.CallOpts)
 }
 
-// PlayerCount is a free data retrieval call binding the contract method 0x302bcc57.
+// Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function playerCount() constant returns(uint256)
-func (_SwearGame *SwearGameCaller) PlayerCount(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _SwearGame.contract.Call(opts, out, "playerCount")
-	return *ret0, err
-}
-
-// PlayerCount is a free data retrieval call binding the contract method 0x302bcc57.
-//
-// Solidity: function playerCount() constant returns(uint256)
-func (_SwearGame *SwearGameSession) PlayerCount() (*big.Int, error) {
-	return _SwearGame.Contract.PlayerCount(&_SwearGame.CallOpts)
-}
-
-// PlayerCount is a free data retrieval call binding the contract method 0x302bcc57.
-//
-// Solidity: function playerCount() constant returns(uint256)
-func (_SwearGame *SwearGameCallerSession) PlayerCount() (*big.Int, error) {
-	return _SwearGame.Contract.PlayerCount(&_SwearGame.CallOpts)
-}
-
-// Players is a free data retrieval call binding the contract method 0xe2eb41ff.
-//
-// Solidity: function players( address) constant returns(bool)
-func (_SwearGame *SwearGameCaller) Players(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _SwearGame.contract.Call(opts, out, "players", arg0)
-	return *ret0, err
-}
-
-// Players is a free data retrieval call binding the contract method 0xe2eb41ff.
-//
-// Solidity: function players( address) constant returns(bool)
-func (_SwearGame *SwearGameSession) Players(arg0 common.Address) (bool, error) {
-	return _SwearGame.Contract.Players(&_SwearGame.CallOpts, arg0)
-}
-
-// Players is a free data retrieval call binding the contract method 0xe2eb41ff.
-//
-// Solidity: function players( address) constant returns(bool)
-func (_SwearGame *SwearGameCallerSession) Players(arg0 common.Address) (bool, error) {
-	return _SwearGame.Contract.Players(&_SwearGame.CallOpts, arg0)
-}
-
-// Token is a free data retrieval call binding the contract method 0xfc0c546a.
-//
-// Solidity: function token() constant returns(address)
-func (_SwearGame *SwearGameCaller) Token(opts *bind.CallOpts) (common.Address, error) {
+// Solidity: function registrar() constant returns(address)
+func (_SwearGame *SwearGameCaller) Registrar(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
 	)
 	out := ret0
-	err := _SwearGame.contract.Call(opts, out, "token")
+	err := _SwearGame.contract.Call(opts, out, "registrar")
 	return *ret0, err
 }
 
-// Token is a free data retrieval call binding the contract method 0xfc0c546a.
+// Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function token() constant returns(address)
-func (_SwearGame *SwearGameSession) Token() (common.Address, error) {
-	return _SwearGame.Contract.Token(&_SwearGame.CallOpts)
+// Solidity: function registrar() constant returns(address)
+func (_SwearGame *SwearGameSession) Registrar() (common.Address, error) {
+	return _SwearGame.Contract.Registrar(&_SwearGame.CallOpts)
 }
 
-// Token is a free data retrieval call binding the contract method 0xfc0c546a.
+// Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function token() constant returns(address)
-func (_SwearGame *SwearGameCallerSession) Token() (common.Address, error) {
-	return _SwearGame.Contract.Token(&_SwearGame.CallOpts)
+// Solidity: function registrar() constant returns(address)
+func (_SwearGame *SwearGameCallerSession) Registrar() (common.Address, error) {
+	return _SwearGame.Contract.Registrar(&_SwearGame.CallOpts)
 }
 
 // TrialRules is a free data retrieval call binding the contract method 0x8a29d969.
@@ -1237,69 +1527,6 @@ func (_SwearGame *SwearGameTransactorSession) ChangeOwner(_newOwner common.Addre
 	return _SwearGame.Contract.ChangeOwner(&_SwearGame.TransactOpts, _newOwner)
 }
 
-// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
-//
-// Solidity: function collectDeposit() returns(bool)
-func (_SwearGame *SwearGameTransactor) CollectDeposit(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _SwearGame.contract.Transact(opts, "collectDeposit")
-}
-
-// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
-//
-// Solidity: function collectDeposit() returns(bool)
-func (_SwearGame *SwearGameSession) CollectDeposit() (*types.Transaction, error) {
-	return _SwearGame.Contract.CollectDeposit(&_SwearGame.TransactOpts)
-}
-
-// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
-//
-// Solidity: function collectDeposit() returns(bool)
-func (_SwearGame *SwearGameTransactorSession) CollectDeposit() (*types.Transaction, error) {
-	return _SwearGame.Contract.CollectDeposit(&_SwearGame.TransactOpts)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
-//
-// Solidity: function deposit(epochs uint256) returns(bool)
-func (_SwearGame *SwearGameTransactor) Deposit(opts *bind.TransactOpts, epochs *big.Int) (*types.Transaction, error) {
-	return _SwearGame.contract.Transact(opts, "deposit", epochs)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
-//
-// Solidity: function deposit(epochs uint256) returns(bool)
-func (_SwearGame *SwearGameSession) Deposit(epochs *big.Int) (*types.Transaction, error) {
-	return _SwearGame.Contract.Deposit(&_SwearGame.TransactOpts, epochs)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
-//
-// Solidity: function deposit(epochs uint256) returns(bool)
-func (_SwearGame *SwearGameTransactorSession) Deposit(epochs *big.Int) (*types.Transaction, error) {
-	return _SwearGame.Contract.Deposit(&_SwearGame.TransactOpts, epochs)
-}
-
-// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
-//
-// Solidity: function isRegister(player address) returns(bool)
-func (_SwearGame *SwearGameTransactor) IsRegister(opts *bind.TransactOpts, player common.Address) (*types.Transaction, error) {
-	return _SwearGame.contract.Transact(opts, "isRegister", player)
-}
-
-// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
-//
-// Solidity: function isRegister(player address) returns(bool)
-func (_SwearGame *SwearGameSession) IsRegister(player common.Address) (*types.Transaction, error) {
-	return _SwearGame.Contract.IsRegister(&_SwearGame.TransactOpts, player)
-}
-
-// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
-//
-// Solidity: function isRegister(player address) returns(bool)
-func (_SwearGame *SwearGameTransactorSession) IsRegister(player common.Address) (*types.Transaction, error) {
-	return _SwearGame.Contract.IsRegister(&_SwearGame.TransactOpts, player)
-}
-
 // LeaveGame is a paid mutator transaction binding the contract method 0x3e95d955.
 //
 // Solidity: function leaveGame(_player address) returns()
@@ -1342,27 +1569,6 @@ func (_SwearGame *SwearGameTransactorSession) NewCase(serviceId [32]byte) (*type
 	return _SwearGame.Contract.NewCase(&_SwearGame.TransactOpts, serviceId)
 }
 
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(_player address) returns(bool)
-func (_SwearGame *SwearGameTransactor) Register(opts *bind.TransactOpts, _player common.Address) (*types.Transaction, error) {
-	return _SwearGame.contract.Transact(opts, "register", _player)
-}
-
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(_player address) returns(bool)
-func (_SwearGame *SwearGameSession) Register(_player common.Address) (*types.Transaction, error) {
-	return _SwearGame.Contract.Register(&_SwearGame.TransactOpts, _player)
-}
-
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(_player address) returns(bool)
-func (_SwearGame *SwearGameTransactorSession) Register(_player common.Address) (*types.Transaction, error) {
-	return _SwearGame.Contract.Register(&_SwearGame.TransactOpts, _player)
-}
-
 // Trial is a paid mutator transaction binding the contract method 0xcf343bb8.
 //
 // Solidity: function trial(id bytes32) returns(bool)
@@ -1384,29 +1590,8 @@ func (_SwearGame *SwearGameTransactorSession) Trial(id [32]byte) (*types.Transac
 	return _SwearGame.Contract.Trial(&_SwearGame.TransactOpts, id)
 }
 
-// UnRegister is a paid mutator transaction binding the contract method 0x27c95625.
-//
-// Solidity: function unRegister(_player address) returns()
-func (_SwearGame *SwearGameTransactor) UnRegister(opts *bind.TransactOpts, _player common.Address) (*types.Transaction, error) {
-	return _SwearGame.contract.Transact(opts, "unRegister", _player)
-}
-
-// UnRegister is a paid mutator transaction binding the contract method 0x27c95625.
-//
-// Solidity: function unRegister(_player address) returns()
-func (_SwearGame *SwearGameSession) UnRegister(_player common.Address) (*types.Transaction, error) {
-	return _SwearGame.Contract.UnRegister(&_SwearGame.TransactOpts, _player)
-}
-
-// UnRegister is a paid mutator transaction binding the contract method 0x27c95625.
-//
-// Solidity: function unRegister(_player address) returns()
-func (_SwearGame *SwearGameTransactorSession) UnRegister(_player common.Address) (*types.Transaction, error) {
-	return _SwearGame.Contract.UnRegister(&_SwearGame.TransactOpts, _player)
-}
-
 // SwearGameAbstractABI is the input ABI used to generate the binding from.
-const SwearGameAbstractABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"collectDeposit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"player\",\"type\":\"address\"}],\"name\":\"isRegister\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"leaveGame\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"register\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"getStatus\",\"outputs\":[{\"name\":\"status\",\"type\":\"uint8\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"epochs\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":true,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"serviceId\",\"type\":\"bytes32\"}],\"name\":\"newCase\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"trial\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"decide\",\"type\":\"string\"}],\"name\":\"Decision\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"depositAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"deposit\",\"type\":\"uint256\"}],\"name\":\"DepositStaked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"reward\",\"type\":\"uint256\"}],\"name\":\"Compensate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"playerId\",\"type\":\"address\"}],\"name\":\"NewPlayer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"playerId\",\"type\":\"address\"}],\"name\":\"PlayerLeftGame\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"}],\"name\":\"NewCaseOpened\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"}],\"name\":\"NewEvidenceSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"CaseResolved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Payment\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"deposit\",\"type\":\"uint256\"}],\"name\":\"AdditionalDepositRequired\",\"type\":\"event\"}]"
+const SwearGameAbstractABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_player\",\"type\":\"address\"}],\"name\":\"leaveGame\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"getStatus\",\"outputs\":[{\"name\":\"status\",\"type\":\"uint8\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"serviceId\",\"type\":\"bytes32\"}],\"name\":\"newCase\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"trial\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"decide\",\"type\":\"string\"}],\"name\":\"Decision\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"}],\"name\":\"NewCaseOpened\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"}],\"name\":\"NewEvidenceSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"plaintiff\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"CaseResolved\",\"type\":\"event\"}]"
 
 // SwearGameAbstractBin is the compiled bytecode used for deploying new contracts.
 const SwearGameAbstractBin = `0x`
@@ -1624,69 +1809,6 @@ func (_SwearGameAbstract *SwearGameAbstractTransactorSession) ChangeOwner(_newOw
 	return _SwearGameAbstract.Contract.ChangeOwner(&_SwearGameAbstract.TransactOpts, _newOwner)
 }
 
-// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
-//
-// Solidity: function collectDeposit() returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractTransactor) CollectDeposit(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _SwearGameAbstract.contract.Transact(opts, "collectDeposit")
-}
-
-// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
-//
-// Solidity: function collectDeposit() returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractSession) CollectDeposit() (*types.Transaction, error) {
-	return _SwearGameAbstract.Contract.CollectDeposit(&_SwearGameAbstract.TransactOpts)
-}
-
-// CollectDeposit is a paid mutator transaction binding the contract method 0x02336f92.
-//
-// Solidity: function collectDeposit() returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractTransactorSession) CollectDeposit() (*types.Transaction, error) {
-	return _SwearGameAbstract.Contract.CollectDeposit(&_SwearGameAbstract.TransactOpts)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
-//
-// Solidity: function deposit(epochs uint256) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractTransactor) Deposit(opts *bind.TransactOpts, epochs *big.Int) (*types.Transaction, error) {
-	return _SwearGameAbstract.contract.Transact(opts, "deposit", epochs)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
-//
-// Solidity: function deposit(epochs uint256) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractSession) Deposit(epochs *big.Int) (*types.Transaction, error) {
-	return _SwearGameAbstract.Contract.Deposit(&_SwearGameAbstract.TransactOpts, epochs)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xb6b55f25.
-//
-// Solidity: function deposit(epochs uint256) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractTransactorSession) Deposit(epochs *big.Int) (*types.Transaction, error) {
-	return _SwearGameAbstract.Contract.Deposit(&_SwearGameAbstract.TransactOpts, epochs)
-}
-
-// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
-//
-// Solidity: function isRegister(player address) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractTransactor) IsRegister(opts *bind.TransactOpts, player common.Address) (*types.Transaction, error) {
-	return _SwearGameAbstract.contract.Transact(opts, "isRegister", player)
-}
-
-// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
-//
-// Solidity: function isRegister(player address) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractSession) IsRegister(player common.Address) (*types.Transaction, error) {
-	return _SwearGameAbstract.Contract.IsRegister(&_SwearGameAbstract.TransactOpts, player)
-}
-
-// IsRegister is a paid mutator transaction binding the contract method 0x22fdef94.
-//
-// Solidity: function isRegister(player address) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractTransactorSession) IsRegister(player common.Address) (*types.Transaction, error) {
-	return _SwearGameAbstract.Contract.IsRegister(&_SwearGameAbstract.TransactOpts, player)
-}
-
 // LeaveGame is a paid mutator transaction binding the contract method 0x3e95d955.
 //
 // Solidity: function leaveGame(_player address) returns()
@@ -1727,27 +1849,6 @@ func (_SwearGameAbstract *SwearGameAbstractSession) NewCase(serviceId [32]byte) 
 // Solidity: function newCase(serviceId bytes32) returns(bool)
 func (_SwearGameAbstract *SwearGameAbstractTransactorSession) NewCase(serviceId [32]byte) (*types.Transaction, error) {
 	return _SwearGameAbstract.Contract.NewCase(&_SwearGameAbstract.TransactOpts, serviceId)
-}
-
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(_player address) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractTransactor) Register(opts *bind.TransactOpts, _player common.Address) (*types.Transaction, error) {
-	return _SwearGameAbstract.contract.Transact(opts, "register", _player)
-}
-
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(_player address) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractSession) Register(_player common.Address) (*types.Transaction, error) {
-	return _SwearGameAbstract.Contract.Register(&_SwearGameAbstract.TransactOpts, _player)
-}
-
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(_player address) returns(bool)
-func (_SwearGameAbstract *SwearGameAbstractTransactorSession) Register(_player common.Address) (*types.Transaction, error) {
-	return _SwearGameAbstract.Contract.Register(&_SwearGameAbstract.TransactOpts, _player)
 }
 
 // Trial is a paid mutator transaction binding the contract method 0xcf343bb8.

@@ -4,8 +4,11 @@ package contracts
 //go:generate abigen --sol ./mirrorens.sol --pkg mirrorens --out ./mirrorgame/witnesses/mirrorens/mirrorens.go
 //go:generate abigen --sol ./promisevalidator.sol --pkg promisevalidator --out ./mirrorgame/witnesses/promisevalidator/promisevalidator.go
 //go:generate abigen --sol ./mirrorrules.sol --pkg mirrorrules --out ./mirrorgame/rules/mirrorrules.go
+//go:generate abigen --sol ./mirrorregistrar.sol --pkg mirrorregistrar --out ./mirrorgame/registrar/mirrorregistrar.go
+
 import (
 	"crypto/ecdsa"
+	"fmt"
 	"math/big"
 	"strings"
 	"testing"
@@ -16,6 +19,7 @@ import (
 	"github.com/ethereum/go-ethereum/contracts/ens/contract"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/crypto"
+	mirrorregistrar "github.com/jaakmusic/swap-swear-and-swindle/contracts/mirrorgame/registrar"
 	mirrorrules "github.com/jaakmusic/swap-swear-and-swindle/contracts/mirrorgame/rules"
 	mirrorens "github.com/jaakmusic/swap-swear-and-swindle/contracts/mirrorgame/witnesses/mirrorens"
 	promisevalidator "github.com/jaakmusic/swap-swear-and-swindle/contracts/mirrorgame/witnesses/promisevalidator"
@@ -47,6 +51,7 @@ type TheGame struct {
 	promiseValidatorAddress  common.Address
 	mirrorEns                *mirrorens.MirrorENS
 	mirrorRules              *mirrorrules.MirrorRules
+	mirrorRegistrar          *mirrorregistrar.MirrorRegistrar
 }
 
 func newTestBackend() *backends.SimulatedBackend {
@@ -98,6 +103,18 @@ func deployMirrorRules(prvKey *ecdsa.PrivateKey, amount *big.Int, backend *backe
 	}
 	commit(backend)
 	return addr, mirrorRules, nil
+}
+
+func deployMirrorRegistrar(prvKey *ecdsa.PrivateKey, amount *big.Int, backend *backends.SimulatedBackend, trialRules common.Address, token common.Address) (common.Address, *mirrorregistrar.MirrorRegistrar, error) {
+	deployTransactor := bind.NewKeyedTransactor(prvKey)
+	deployTransactor.Value = amount
+
+	addr, _, mirrorRegistrar, err := mirrorregistrar.DeployMirrorRegistrar(deployTransactor, backend, trialRules, token)
+	if err != nil {
+		return common.Address{}, nil, err
+	}
+	commit(backend)
+	return addr, mirrorRegistrar, nil
 }
 
 func deploySwearGame(prvKey *ecdsa.PrivateKey, amount *big.Int, backend *backends.SimulatedBackend, tokenContractAddr common.Address, mirrorTransistions common.Address, rewordCompansation *big.Int) (common.Address, *SwearGame, error) {
@@ -160,7 +177,7 @@ func deployENS(prvKey *ecdsa.PrivateKey, amount *big.Int, backend *backends.Simu
 	return ensAddress, addr, ens, publicResolver, nil
 }
 
-func deposit(t *testing.T, backend *backends.SimulatedBackend, sampleToken *SampleToken, swearGame *SwearGame, vestingPeriod int64) {
+func deposit(t *testing.T, backend *backends.SimulatedBackend, sampleToken *SampleToken, registrar *mirrorregistrar.MirrorRegistrar, vestingPeriod int64) {
 	//trasfer 100 tokens to the Service
 	opts := bind.NewKeyedTransactor(ethKey)
 	_, err := sampleToken.Transfer(opts, serviceAddr, big.NewInt(100))
@@ -172,7 +189,7 @@ func deposit(t *testing.T, backend *backends.SimulatedBackend, sampleToken *Samp
 	//deposit 50 token to the contract
 	opts = bind.NewKeyedTransactor(serviceKey)
 	opts.Value = big.NewInt(serviceDeposit)
-	_, err = swearGame.Deposit(opts, big.NewInt(vestingPeriod))
+	_, err = registrar.Deposit(opts, big.NewInt(vestingPeriod))
 	if err != nil {
 		t.Fatalf("depost tokens to contract: expected no error, got %v", err)
 	}
@@ -184,10 +201,10 @@ func openCaseForMirrorGame(t *testing.T, clientContent string, serviceContent st
 
 	theGame := deployTheGame(t, backend)
 
-	deposit(t, backend, theGame.sampleToken, theGame.swearGame, depositVestingPeriod)
+	deposit(t, backend, theGame.sampleToken, theGame.mirrorRegistrar, depositVestingPeriod)
 
 	opts := bind.NewKeyedTransactor(serviceKey)
-	_, err := theGame.swearGame.Register(opts, clientAddr)
+	_, err := theGame.mirrorRegistrar.Register(opts, clientAddr)
 	if err != nil {
 		t.Fatalf("Register: expected no error, got %v", err)
 	}
@@ -208,7 +225,7 @@ func openCaseForMirrorGame(t *testing.T, clientContent string, serviceContent st
 	if err != nil {
 		t.Fatal("registerENSRecord", clientENSName, "fail")
 	}
-	depositBefore, err := theGame.swearGame.Deposits(&bind.CallOpts{}, serviceAddr)
+	depositBefore, err := theGame.mirrorRegistrar.Deposits(&bind.CallOpts{}, serviceAddr)
 	if err != nil {
 		t.Fatalf("AmountStaked : expected no error, got %v", err)
 	}
@@ -218,7 +235,7 @@ func openCaseForMirrorGame(t *testing.T, clientContent string, serviceContent st
 		t.Fatalf("balanceOfClientBefore : expected no error, got %v", err)
 	}
 	opts = bind.NewKeyedTransactor(clientKey)
-
+	fmt.Println("add", theGame.swearGameContractAddress.String())
 	_, err = theGame.swearGame.NewCase(opts, serviceId)
 
 	if err != nil {
@@ -280,7 +297,7 @@ func openCaseForMirrorGame(t *testing.T, clientContent string, serviceContent st
 		commit(backend)
 	}
 
-	depositAfter, err := theGame.swearGame.Deposits(&bind.CallOpts{}, serviceAddr)
+	depositAfter, err := theGame.mirrorRegistrar.Deposits(&bind.CallOpts{}, serviceAddr)
 	if err != nil {
 		t.Fatalf("AmountStaked : expected no error, got %v", err)
 	}
@@ -340,10 +357,10 @@ func TestCollectDepositDuringTrial(t *testing.T) {
 
 	theGame := deployTheGame(t, backend)
 
-	deposit(t, backend, theGame.sampleToken, theGame.swearGame, depositVestingPeriod)
+	deposit(t, backend, theGame.sampleToken, theGame.mirrorRegistrar, depositVestingPeriod)
 
 	opts := bind.NewKeyedTransactor(serviceKey)
-	_, err := theGame.swearGame.Register(opts, clientAddr)
+	_, err := theGame.mirrorRegistrar.Register(opts, clientAddr)
 	if err != nil {
 		t.Fatalf("Register: expected no error, got %v", err)
 	}
@@ -374,7 +391,7 @@ func TestCollectDepositDuringTrial(t *testing.T) {
 		commit(backend)
 	}
 
-	_, err = theGame.swearGame.CollectDeposit(opts)
+	_, err = theGame.mirrorRegistrar.CollectDeposit(opts)
 
 	if err != nil {
 		t.Fatalf("CollectDeposit: expected no error, got %v", err)
@@ -396,7 +413,7 @@ func TestCollectDeposit(t *testing.T) {
 
 	theGame := deployTheGame(t, backend)
 
-	deposit(t, backend, theGame.sampleToken, theGame.swearGame, depositVestingPeriod)
+	deposit(t, backend, theGame.sampleToken, theGame.mirrorRegistrar, depositVestingPeriod)
 	commit(backend)
 
 	opts := bind.NewKeyedTransactor(serviceKey)
@@ -406,7 +423,7 @@ func TestCollectDeposit(t *testing.T) {
 		t.Fatalf("BalanceOf : expected no error, got %v", err)
 	}
 
-	_, err = theGame.swearGame.CollectDeposit(opts)
+	_, err = theGame.mirrorRegistrar.CollectDeposit(opts)
 	if err != nil {
 		t.Fatalf("CollectDeposit: expected no error, got %v", err)
 	}
@@ -432,7 +449,7 @@ func TestCollectDeposit(t *testing.T) {
 		commit(backend)
 	}
 
-	_, err = theGame.swearGame.CollectDeposit(opts)
+	_, err = theGame.mirrorRegistrar.CollectDeposit(opts)
 
 	if err != nil {
 		t.Fatalf("CollectDeposit: expected no error, got %v", err)
@@ -455,10 +472,10 @@ func TestRegisterAndNewCase(t *testing.T) {
 
 	theGame := deployTheGame(t, backend)
 
-	deposit(t, backend, theGame.sampleToken, theGame.swearGame, depositVestingPeriod)
+	deposit(t, backend, theGame.sampleToken, theGame.mirrorRegistrar, depositVestingPeriod)
 
 	opts := bind.NewKeyedTransactor(serviceKey)
-	_, err := theGame.swearGame.Register(opts, clientAddr)
+	_, err := theGame.mirrorRegistrar.Register(opts, clientAddr)
 	if err != nil {
 		t.Fatalf("Register: expected no error, got %v", err)
 	}
@@ -539,21 +556,21 @@ func TestDoubleRegistration(t *testing.T) {
 
 	theGame := deployTheGame(t, backend)
 
-	deposit(t, backend, theGame.sampleToken, theGame.swearGame, depositVestingPeriod)
+	deposit(t, backend, theGame.sampleToken, theGame.mirrorRegistrar, depositVestingPeriod)
 
 	opts := bind.NewKeyedTransactor(serviceKey)
-	_, err := theGame.swearGame.Register(opts, clientAddr)
+	_, err := theGame.mirrorRegistrar.Register(opts, clientAddr)
 	if err != nil {
 		t.Fatalf("Register: expected no error, got %v", err)
 	}
 	commit(backend)
 	opts = bind.NewKeyedTransactor(serviceKey)
-	_, err = theGame.swearGame.Register(opts, clientAddr)
+	_, err = theGame.mirrorRegistrar.Register(opts, clientAddr)
 	if err != nil {
 		t.Fatalf("Register: expected no error, got %v", err)
 	}
 	commit(backend)
-	registerPlayerCounter, err := theGame.swearGame.PlayerCount(&bind.CallOpts{})
+	registerPlayerCounter, err := theGame.mirrorRegistrar.PlayerCount(&bind.CallOpts{})
 	if err != nil {
 		t.Fatalf("PlayerCount : expected no error, got %v", err)
 	}
@@ -570,16 +587,16 @@ func TestRegisterFromClient(t *testing.T) {
 
 	theGame := deployTheGame(t, backend)
 
-	deposit(t, backend, theGame.sampleToken, theGame.swearGame, depositVestingPeriod)
+	deposit(t, backend, theGame.sampleToken, theGame.mirrorRegistrar, depositVestingPeriod)
 
 	opts := bind.NewKeyedTransactor(ethKey)
-	_, err := theGame.swearGame.Register(opts, clientAddr)
+	_, err := theGame.mirrorRegistrar.Register(opts, clientAddr)
 	if err != nil {
 		t.Fatalf("Register: expected no error, got %v", err)
 	}
 	commit(backend)
 
-	PlayerCount, err := theGame.swearGame.PlayerCount(&bind.CallOpts{})
+	PlayerCount, err := theGame.mirrorRegistrar.PlayerCount(&bind.CallOpts{})
 	if err != nil {
 		t.Fatalf("PlayerCount : expected no error, got %v", err)
 	}
@@ -601,14 +618,14 @@ func TestDeposit(t *testing.T) {
 	commit(backend)
 	opts = bind.NewKeyedTransactor(serviceKey)
 	opts.Value = big.NewInt(serviceDeposit)
-	_, err = theGame.swearGame.Deposit(opts, big.NewInt(100))
+	_, err = theGame.mirrorRegistrar.Deposit(opts, big.NewInt(100))
 
 	if err != nil {
 		t.Fatalf("depost tokens to contract: expected no error, got %v", err)
 	}
 	commit(backend)
 
-	deposit, err := theGame.swearGame.Deposits(&bind.CallOpts{}, serviceAddr)
+	deposit, err := theGame.mirrorRegistrar.Deposits(&bind.CallOpts{}, serviceAddr)
 	if err != nil {
 		t.Fatalf("AmountStaked : expected no error, got %v", err)
 	}
@@ -618,12 +635,12 @@ func TestDeposit(t *testing.T) {
 	}
 
 	opts.Value = big.NewInt(serviceDeposit)
-	_, err = theGame.swearGame.Deposit(opts, big.NewInt(100))
+	_, err = theGame.mirrorRegistrar.Deposit(opts, big.NewInt(100))
 	if err != nil {
 		t.Fatalf("depost tokens to contract: expected no error, got %v", err)
 	}
 	commit(backend)
-	deposit, err = theGame.swearGame.Deposits(&bind.CallOpts{}, serviceAddr)
+	deposit, err = theGame.mirrorRegistrar.Deposits(&bind.CallOpts{}, serviceAddr)
 	if err != nil {
 		t.Fatalf("AmountStaked : expected no error, got %v", err)
 	}
@@ -653,7 +670,12 @@ func deployTheGame(t *testing.T, backend *backends.SimulatedBackend) *TheGame {
 		t.Fatalf("deploy contract: expected no error, got %v", err)
 	}
 
-	swearGameContractAddress, swearGame, err := deploySwearGame(serviceKey, big.NewInt(0), backend, sampleTokenAddress, mirrorRulesContractAddress, big.NewInt(compensationAmount))
+	mirrorRegistrarContractAddress, mirrorRegistrar, err := deployMirrorRegistrar(serviceKey, big.NewInt(0), backend, mirrorRulesContractAddress, sampleTokenAddress)
+	if err != nil {
+		t.Fatalf("deploy contract: expected no error, got %v", err)
+	}
+
+	swearGameContractAddress, swearGame, err := deploySwearGame(serviceKey, big.NewInt(0), backend, mirrorRegistrarContractAddress, mirrorRulesContractAddress, big.NewInt(compensationAmount))
 	if err != nil {
 		t.Fatalf("deploy contract: expected no error, got %v", err)
 	}
@@ -665,6 +687,7 @@ func deployTheGame(t *testing.T, backend *backends.SimulatedBackend) *TheGame {
 	theGame.promiseValidator = promiseValidator
 	theGame.promiseValidatorAddress = promiseValidatorContractAddress
 	theGame.swearGame = swearGame
+	theGame.mirrorRegistrar = mirrorRegistrar
 
 	return &theGame
 }

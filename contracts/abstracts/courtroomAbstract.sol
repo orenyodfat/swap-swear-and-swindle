@@ -12,7 +12,7 @@ contract SwearGameAbstract is Owned {
     /// case of a valid case.
     /// @param _player  - the player address
     /// @return bool registered - true for success registration.
-    function register(address _player) onlyOwner public returns (bool);
+    //function register(address _player) onlyOwner public returns (bool);
 
     /// @notice leaveGame - dismiss a player from the game (unregister)
     /// allow only plaintiff which do not have openCases on it name to leave game
@@ -39,20 +39,20 @@ contract SwearGameAbstract is Owned {
     /// @return bool - true for successful operation.
     function trial(bytes32 id) public returns (bool);
 
-    function deposit(uint epochs) payable returns (bool);
+    /*function deposit(uint epochs) payable returns (bool);
 
     function collectDeposit() external returns (bool);
 
-    function isRegister(address player) returns (bool);
+    function isRegister(address player) returns (bool);*/
 
     event Decision(string decide);
-    event DepositStaked(uint depositAmount, uint deposit);
+    /*event DepositStaked(uint depositAmount, uint deposit);
     event Compensate(address recipient, uint reward);
     event NewPlayer(address playerId);
-    event PlayerLeftGame(address playerId);
+    event PlayerLeftGame(address playerId);*/
     event NewCaseOpened(bytes32 id, address plaintiff);
     event NewEvidenceSubmitted(bytes32 id, address plaintiff);
     event CaseResolved(bytes32 id, address plaintiff, uint reward,uint8 status);
-    event Payment(address from,address to ,uint256 value);
-    event AdditionalDepositRequired(uint256 deposit);
+    /*event Payment(address from,address to ,uint256 value);
+    event AdditionalDepositRequired(uint256 deposit);*/
 }
