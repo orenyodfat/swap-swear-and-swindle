@@ -17,7 +17,7 @@ and to check for expiry time for a specific case and trial status.
 
 It calls the specific game witnesses contracts to testimony and validates for a submitted evidence.
 
-The SwearGame contract is aligned with the ABIs defined at [SwearGameAbstract](replace with a link).
+The SwearGame contract is aligned with the ABIs defined at [SwearGameAbstract](contracts/abstracts/courtroomAbstract.sol).
 
 ### Witness contract
 
@@ -29,7 +29,7 @@ The SwearGame contract is aligned with the ABIs defined at [SwearGameAbstract](r
  which means that each service will have its own witnesses contracts.
 
  The witness contract is accessed by the main SwearGame contract and is aligned with  
- the ABIs defined at [witnessAbstract](replace with a link) contract.
+ the ABIs defined at [witnessAbstract](contracts/abstracts/witnessAbstract.sol) contract.
 
 
 ### Trial rules contract
@@ -42,14 +42,14 @@ A contract which defines a specific set of rules for a game:
 
 While the main SwearGame contract conducts a trial to resolve a specific case it iterates between different trial statuses.
 
-This TrialRules contract is aligned with [TrialRulesAbstract](replace with a link) contract.
+This TrialRules contract is aligned with [TrialRulesAbstract](contracts/abstracts/trialrulesabstract.sol) contract.
 
-# Trial registrar
+### Trial registrar
 
 A contract which manages registrations and deposits for the game players.
 A player who wishes to register and/or deposit to the swear game should do that via this contract.
 The registrar contract is accessed by the main SwearGame contract and is aligned with  
-the ABIs defined at [RegistrarAbstract](replace with a link) contract.
+the ABIs defined at [RegistrarAbstract](contracts/abstracts/registrarabstract.sol) contract.
 
 
 ## Mirror game
